@@ -59,25 +59,22 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Explicit CORS configuration
-                .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/api/auth/**").permitAll() // Allow authentication endpoints
-                    .requestMatchers("/api/test/**").permitAll() // Allow test endpoints
-                    .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs.yaml").permitAll() // Allow Swagger UI
-                    .requestMatchers("/api/fooditems/save").hasRole("ADMIN") // Only Admin can save food items
-                    .requestMatchers("/api/orders/confirmed").hasRole("ADMIN") // Only Admin can access confirmed orders
-                    .requestMatchers("/api/orders/canceled").hasRole("ADMIN") // Only Admin can access canceled orders
-                    .requestMatchers("/api/fooditems/update/**").hasRole("ADMIN") // Only Admin can update food items
-                    .requestMatchers("/api/payment/**").authenticated() // Authenticate payment endpoints
-                    .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() // Allow OPTIONS requests
-                    .anyRequest().authenticated()); // Require authentication for other endpoints
+            .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Explicit CORS configuration
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/favicon.ico").permitAll() // Allow favicon without authentication
+                .requestMatchers("/api/auth/**").permitAll() // Allow authentication endpoints
+                .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs.yaml").permitAll() // Allow Swagger UI
+                .requestMatchers("/api/fooditems/save").hasRole("ADMIN") // Only Admin can save food items
+                .requestMatchers("/api/bartender/book").authenticated() // Secured bartender booking endpoint
+                .anyRequest().authenticated()); // All other requests require authentication
 
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
+
 
 
     @Bean
