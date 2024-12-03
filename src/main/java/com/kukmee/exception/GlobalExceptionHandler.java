@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -40,8 +41,11 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<?> handleResourceNotFoundException(ResourceNotFoundException ex) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
 	}
-	
-	
+
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException e) {
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Date must be in the format YYYY-MM-DD");
+	}
 
 }
 

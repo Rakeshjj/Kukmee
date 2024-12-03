@@ -1,5 +1,6 @@
 package com.kukmee.cook;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -8,11 +9,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/domestic-cook-bookings")
 public class CookBookingController {
 
-	private final DomesticCookBookingService domesticCookBookingService;
-
-	public CookBookingController(DomesticCookBookingService domesticCookBookingService) {
-		this.domesticCookBookingService = domesticCookBookingService;
-	}
+	@Autowired
+	private DomesticCookBookingService domesticCookBookingService;
 
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@PostMapping

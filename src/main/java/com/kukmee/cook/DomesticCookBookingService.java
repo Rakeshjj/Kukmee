@@ -1,16 +1,13 @@
 package com.kukmee.cook;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class DomesticCookBookingService {
 
-	private final DomesticCookBookingRepository domesticCookBookingRepository;
-
-	public DomesticCookBookingService(DomesticCookBookingRepository domesticCookBookingRepository) {
-		super();
-		this.domesticCookBookingRepository = domesticCookBookingRepository;
-	}
+	@Autowired
+	private DomesticCookBookingRepository domesticCookBookingRepository;
 
 	public DomesticCookBooking createDomesticCookBooking(DomesticCookBooking domesticCookBooking) {
 

@@ -2,6 +2,7 @@ package com.kukmee.chef;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.kukmee.exception.ResourceNotFoundException;
@@ -11,13 +12,22 @@ import jakarta.transaction.Transactional;
 @Service
 public class ChefBookingService {
 
-	private final ChefBookingRepository chefBookingRepository;
-
-	public ChefBookingService(ChefBookingRepository chefBookingRepository) {
-		this.chefBookingRepository = chefBookingRepository;
-	}
+	@Autowired
+	private ChefBookingRepository chefBookingRepository;
 
 	public ChefBooking createBooking(ChefBooking chefBooking) {
+
+		if (chefBooking.getOccasion() == null || chefBooking.getOccasion().isEmpty()) {
+			throw new IllegalArgumentException("Occasion is required");
+		}
+
+		if (chefBooking.getDate() == null || chefBooking.getDate().isEmpty()) {
+			throw new IllegalArgumentException("Date is required");
+		}
+
+		if (chefBooking.getLocation() == null || chefBooking.getLocation().isEmpty()) {
+			throw new IllegalArgumentException("Location is required");
+		}
 
 		if (chefBooking.getMealType() == null || chefBooking.getMealType().isEmpty()) {
 			throw new IllegalArgumentException("Meal type (Breakfast, Lunch, Dinner) is required.");
@@ -85,7 +95,7 @@ public class ChefBookingService {
 			chefBooking.setId(id);
 			return chefBookingRepository.save(chefBooking);
 		} else {
-			throw new ResourceNotFoundException("id not found :"+id);
+			throw new ResourceNotFoundException("id not found :" + id);
 		}
 	}
 }

@@ -1,64 +1,61 @@
 package com.kukmee.cook;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MonthlyCookBookingService {
 
-	private final MonthlyCookBookingRepository monthlyCookBookingRepository;
+	@Autowired
+	private  MonthlyCookBookingRepository bookingRepository;
 
-	public MonthlyCookBookingService(MonthlyCookBookingRepository monthlyCookBookingRepository) {
-		super();
-		this.monthlyCookBookingRepository = monthlyCookBookingRepository;
-	}
 
-	public MonthlyCookBooking createBooking(MonthlyCookBooking monthlyCookBooking, double couponDiscount) {
+	public MonthlyCookBooking createBooking(MonthlyCookBooking booking, double couponDiscount) {
 
-		if (monthlyCookBooking.getNumberOfPeople() <= 0 || monthlyCookBooking.getNumberOfPeople() > 6) {
-			throw new IllegalArgumentException("Number of people must be between 1 and 6");
+		if (booking.getNumberOfPeople() <= 0 || booking.getNumberOfPeople() > 6) {
+			throw new IllegalArgumentException("Number of people must be between 1 and 6.");
 		}
 
 		double baseCharge = 3069;
 
-		switch (monthlyCookBooking.getNumberOfPeople()) {
-		case 2: {
+		switch (booking.getNumberOfPeople()) {
+		case 2:
 			baseCharge += 100;
 			break;
-		}
-		case 3: {
+		case 3:
 			baseCharge += 150;
 			break;
-		}
-		case 4: {
+		case 4:
 			baseCharge += 500;
 			break;
-		}
-		case 5: {
+		case 5:
 			baseCharge += 800;
 			break;
-		}
-		case 6: {
+		case 6:
 			baseCharge += 1000;
 			break;
 		}
 
-		default:
-			throw new IllegalArgumentException("Unexpected value: " + baseCharge);
-		}
+		double discountedAmount = baseCharge - couponDiscount;
 
-		double discountAmount = baseCharge - couponDiscount;
+		double gst = discountedAmount * 0.18;
 
-		double gst = discountAmount * 0.18;
+		double totalAmount = discountedAmount + gst;
 
-		double toltalAmount = discountAmount + gst;
+		double advancePayment = totalAmount * 0.4;
+		double balanceAmount = totalAmount - advancePayment;
 
-		double advancepayment = toltalAmount * 0.4;
-		double balanceAmount = toltalAmount - advancepayment;
+		booking.setTotalAmount(totalAmount);
+		booking.setAdvancePayment(advancePayment);
+		booking.setBalanceAmount(balanceAmount);
 
-		monthlyCookBooking.setAdvancePayment(advancepayment);
-		monthlyCookBooking.setBalanceAmount(balanceAmount);
-		monthlyCookBooking.setTotalAmount(toltalAmount);
+		return bookingRepository.save(booking);
+	}
 
-		return monthlyCookBookingRepository.save(monthlyCookBooking);
+	public List<MonthlyCookBooking> getAllBookings() {
+		List<MonthlyCookBooking> monthlyCookBookings = bookingRepository.findAll();
+		return monthlyCookBookings;
 	}
 }
