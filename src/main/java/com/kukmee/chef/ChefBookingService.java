@@ -91,7 +91,7 @@ public class ChefBookingService {
 
 	@Transactional
 	public ChefBooking updateBooking(Long id, ChefBooking chefBooking) {
-		if (chefBookingRepository.existsById(id)) {
+		if (!chefBookingRepository.existsById(id)) {
 			chefBooking.setId(id);
 			return chefBookingRepository.save(chefBooking);
 		} else {

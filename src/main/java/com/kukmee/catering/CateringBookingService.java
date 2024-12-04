@@ -1,7 +1,14 @@
 package com.kukmee.catering;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.kukmee.chef.ChefBooking;
+import com.kukmee.exception.ResourceNotFoundException;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class CateringBookingService {
@@ -27,7 +34,8 @@ public class CateringBookingService {
 			throw new IllegalArgumentException("Number of people must be greater than zero");
 		}
 
-		if (cateringBooking.getPhoneNumber() == null || String.valueOf(cateringBooking.getPhoneNumber()).length() != 10) {
+		if (cateringBooking.getPhoneNumber() == null
+				|| String.valueOf(cateringBooking.getPhoneNumber()).length() != 10) {
 			throw new IllegalArgumentException("Phone number is required & exactly 10 digits");
 		}
 
@@ -52,5 +60,31 @@ public class CateringBookingService {
 		cateringBooking.setTotalAmount(totalAmount);
 
 		return cateringBookingRepository.save(cateringBooking);
+	}
+
+	public List<CateringBooking> getAllBookings() {
+		return cateringBookingRepository.findAll();
+	}
+
+	public CateringBooking getById(Long Id) {
+		return cateringBookingRepository.findById(Id)
+				.orElseThrow(() -> new ResourceNotFoundException("Id not found :" + Id));
+	}
+
+	public void deleteCateringBooking(Long Id) {
+		if (cateringBookingRepository.existsById(Id)) {
+			throw new ResourceNotFoundException("Id not found :" + Id);
+		}
+		cateringBookingRepository.deleteById(Id);
+	}
+
+	@Transactional
+	public CateringBooking updateBooking(Long id, CateringBooking cateringBooking) {
+		if (!cateringBookingRepository.existsById(id)) {
+			cateringBooking.setId(id);
+			return cateringBookingRepository.save(cateringBooking);
+		} else {
+			throw new ResourceNotFoundException("id not found :" + id);
+		}
 	}
 }
