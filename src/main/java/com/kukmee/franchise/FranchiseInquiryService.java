@@ -19,8 +19,8 @@ public class FranchiseInquiryService {
 			throw new IllegalArgumentException("Email is required");
 		}
 
-		if (franchiseInquiry.getPhone() == null || franchiseInquiry.getPhone().isEmpty()) {
-			throw new IllegalArgumentException("Phone is required");
+		if (franchiseInquiry.getPhone() == null || String.valueOf(franchiseInquiry.getPhone()).length() != 10) {
+			throw new IllegalArgumentException("Phone number is required & exactly 10 digits");
 		}
 		return franchiseInquiryRepository.save(franchiseInquiry);
 	}

@@ -10,21 +10,25 @@ public class CateringBookingService {
 	private CateringBookingRepository cateringBookingRepository;
 
 	public CateringBooking createCateringBooking(CateringBooking cateringBooking) {
-		
-		if(cateringBooking.getOccasion() == null || cateringBooking.getOccasion().isEmpty()) {
+
+		if (cateringBooking.getOccasion() == null || cateringBooking.getOccasion().isEmpty()) {
 			throw new IllegalArgumentException("Occasion is required");
 		}
-		
-		if(cateringBooking.getEventDate() == null || cateringBooking.getEventDate().isEmpty()) {
+
+		if (cateringBooking.getEventDate() == null || cateringBooking.getEventDate().isEmpty()) {
 			throw new IllegalArgumentException("Date is required");
 		}
-		
-		if(cateringBooking.getVenueLocation() == null || cateringBooking.getVenueLocation().isEmpty()) {
+
+		if (cateringBooking.getVenueLocation() == null || cateringBooking.getVenueLocation().isEmpty()) {
 			throw new IllegalArgumentException("Location is required");
 		}
 
 		if (cateringBooking.getNumberOfPeople() <= 0) {
 			throw new IllegalArgumentException("Number of people must be greater than zero");
+		}
+
+		if (cateringBooking.getPhoneNumber() == null || String.valueOf(cateringBooking.getPhoneNumber()).length() != 10) {
+			throw new IllegalArgumentException("Phone number is required & exactly 10 digits");
 		}
 
 		double serviceCharge = 500;

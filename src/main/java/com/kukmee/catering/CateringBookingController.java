@@ -1,6 +1,7 @@
 package com.kukmee.catering;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -15,6 +16,7 @@ public class CateringBookingController {
 		this.cateringBookingService = cateringBookingService;
 	}
 
+	@PreAuthorize("hasRole('CUSTOMER')")
 	@PostMapping
 	public ResponseEntity<CateringBooking> createCateringBooking(@Valid @RequestBody CateringBooking cateringBooking) {
 		CateringBooking createdBooking = cateringBookingService.createCateringBooking(cateringBooking);
