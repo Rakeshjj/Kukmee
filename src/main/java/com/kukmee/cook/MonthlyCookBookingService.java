@@ -5,12 +5,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.kukmee.exception.ResourceNotFoundException;
+
 @Service
 public class MonthlyCookBookingService {
 
 	@Autowired
-	private  MonthlyCookBookingRepository bookingRepository;
-
+	private MonthlyCookBookingRepository bookingRepository;
 
 	public MonthlyCookBooking createBooking(MonthlyCookBooking booking, double couponDiscount) {
 
@@ -57,5 +58,16 @@ public class MonthlyCookBookingService {
 	public List<MonthlyCookBooking> getAllBookings() {
 		List<MonthlyCookBooking> monthlyCookBookings = bookingRepository.findAll();
 		return monthlyCookBookings;
+	}
+
+	public MonthlyCookBooking getById(Long id) {
+		return bookingRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Id not found :" + id));
+	}
+
+	public void deleteById(Long id) {
+		if (!bookingRepository.existsById(id)) {
+			throw new ResourceNotFoundException("Id not found :" + id);
+		}
+		bookingRepository.deleteById(id);
 	}
 }

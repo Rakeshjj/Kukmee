@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -47,13 +48,13 @@ public class ChefBookingController {
 	}
 
 	@PreAuthorize("hasRole('CUSTOMER')")
-	@GetMapping("/{id}")
-	public ResponseEntity<ChefBooking> getBooking(@PathVariable Long id) {
+	@GetMapping("/get")
+	public ResponseEntity<ChefBooking> getBooking(@RequestParam Long id) {
 		ChefBooking chefBooking = chefBookingService.getBookingById(id);
 		return ResponseEntity.ok(chefBooking);
 	}
 
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('CUSTOMER')")
 	@GetMapping("/getAll")
 	public ResponseEntity<List<ChefBooking>> getAllbookings() {
 		List<ChefBooking> bookings = chefBookingService.getAllBookings();
@@ -62,20 +63,9 @@ public class ChefBookingController {
 
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteBooking(@PathVariable Long id) {
+	public ResponseEntity<?> deleteBooking(@RequestParam Long id) {
 		chefBookingService.deleteBooking(id);
 		return ResponseEntity.ok("Booking deleted successfully.");
-	}
-
-	@PreAuthorize("hasRole('CUSTOMER')")
-	@PutMapping("/{id}")
-	public ResponseEntity<?> updateBooking(@PathVariable Long id, @RequestBody ChefBooking chefBooking) {
-		ChefBooking updatedBooking = chefBookingService.updateBooking(id, chefBooking);
-		if (updatedBooking != null) {
-			return ResponseEntity.ok("Booking updated successfully.");
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Booking not found.");
-		}
 	}
 
 }

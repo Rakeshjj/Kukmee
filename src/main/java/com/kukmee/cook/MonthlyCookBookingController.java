@@ -29,4 +29,15 @@ public class MonthlyCookBookingController {
 		List<MonthlyCookBooking> monthlyCookBookings = bookingService.getAllBookings();
 		return ResponseEntity.ok(monthlyCookBookings);
 	}
+
+	@GetMapping("/get")
+	public ResponseEntity<?> getById(Long id) {
+		MonthlyCookBooking monthlyCookBooking = bookingService.getById(id);
+		return ResponseEntity.ok(monthlyCookBooking);
+	}
+
+	public ResponseEntity<?> deleteById(Long id) {
+		bookingService.deleteById(id);
+		return ResponseEntity.ok("Deleted successfully");
+	}
 }

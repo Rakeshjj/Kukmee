@@ -48,97 +48,93 @@ public class ChefService {
 
 	@Autowired
 	private JwtUtils jwtUtils;
-	
 
-    @Autowired
-    private EmailVerificationTokenRepository emailVerificationTokenRepository;
+	@Autowired
+	private EmailVerificationTokenRepository emailVerificationTokenRepository;
 
-    @Autowired
-    private EmailService emailService;
+	@Autowired
+	private EmailService emailService;
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
 	public ResponseEntity<?> registerChef(@Valid ChefSignup chefSignup) {
-        // Check if username already exists
-        if (chefRepository.existsByUsername(chefSignup.getUsername())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken"));
-        }
+		// Check if username already exists
+		if (chefRepository.existsByUsername(chefSignup.getUsername())) {
+			return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken"));
+		}
 
-        // Check if email already exists
-        if (chefRepository.existsByEmail(chefSignup.getEmail())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use"));
-        }
+		// Check if email already exists
+		if (chefRepository.existsByEmail(chefSignup.getEmail())) {
+			return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use"));
+		}
 
-        // Check if phone number already exists
-        if (chefRepository.existsByPhonenumber(chefSignup.getPhonenumber())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Phone number is already in use"));
-        }
+		// Check if phone number already exists
+		if (chefRepository.existsByPhonenumber(chefSignup.getPhonenumber())) {
+			return ResponseEntity.badRequest().body(new MessageResponse("Error: Phone number is already in use"));
+		}
 
-        // Create new Chef object and encode password
-        Chef chef = new Chef(chefSignup.getUsername(), chefSignup.getEmail(),
-                encoder.encode(chefSignup.getPassword()), chefSignup.getPhonenumber(),
-                chefSignup.getYearsOfExperience(), chefSignup.getSpecialty());
+		// Create new Chef object and encode password
+		Chef chef = new Chef(chefSignup.getUsername(), chefSignup.getEmail(), encoder.encode(chefSignup.getPassword()),
+				chefSignup.getPhonenumber(), chefSignup.getYearsOfExperience(), chefSignup.getSpecialty());
 
-        Set<String> strRoles = chefSignup.getRole();
-        Set<Role> roles = new HashSet<>();
+		Set<String> strRoles = chefSignup.getRole();
+		Set<Role> roles = new HashSet<>();
 
-        // Assign default role if no roles are provided
-        if (strRoles == null) {
-            Role defaultRole = roleRepository.findByName(ERole.ROLE_CUSTOMER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found"));
-            roles.add(defaultRole);
-        } else {
-            strRoles.forEach(role -> {
-                Role roleEntity = roleRepository.findByName(ERole.valueOf(role))
-                        .orElseThrow(() -> new RuntimeException("Error: Role is not found"));
-                roles.add(roleEntity);
-            });
-        }
+		// Assign default role if no roles are provided
+		if (strRoles == null) {
+			Role defaultRole = roleRepository.findByName(ERole.ROLE_CUSTOMER)
+					.orElseThrow(() -> new RuntimeException("Error: Role is not found"));
+			roles.add(defaultRole);
+		} else {
+			strRoles.forEach(role -> {
+				Role roleEntity = roleRepository.findByName(ERole.valueOf(role))
+						.orElseThrow(() -> new RuntimeException("Error: Role is not found"));
+				roles.add(roleEntity);
+			});
+		}
 
-        // Set roles and save Chef object
-        chef.setRoles(roles);
-        chefRepository.save(chef);
+		// Set roles and save Chef object
+		chef.setRoles(roles);
+		chefRepository.save(chef);
 
-        // Generate verification token
-        String token = UUID.randomUUID().toString();
-        EmailVerificationToken verificationToken = new EmailVerificationToken();
-        verificationToken.setToken(token);
-        verificationToken.setChef(chef);
-        verificationToken.setExpiryDate(LocalDateTime.now().plusDays(1)); // Token valid for 1 day
-        emailVerificationTokenRepository.save(verificationToken);
+		// Generate verification token
+		String token = UUID.randomUUID().toString();
+		EmailVerificationToken verificationToken = new EmailVerificationToken();
+		verificationToken.setToken(token);
+		verificationToken.setChef(chef);
+		verificationToken.setExpiryDate(LocalDateTime.now().plusDays(1)); // Token valid for 1 day
+		emailVerificationTokenRepository.save(verificationToken);
 
-        // Send verification email
-        String verificationUrl = "http://localhost:8080/api/auth/verify-email?token=" + token;
-        emailService.sendSimpleMessage(chefSignup.getEmail(), "Email Verification",
-                "Click the link to verify your email: " + verificationUrl);
+		// Send verification email
+		String verificationUrl = "http://localhost:8080/api/auth/verify-email?token=" + token;
+		emailService.sendSimpleMessage(chefSignup.getEmail(), "Email Verification",
+				"Click the link to verify your email: " + verificationUrl);
 
-        return ResponseEntity.ok(new MessageResponse("Chef registered successfully. Please verify your email."));
-    }
+		return ResponseEntity.ok(new MessageResponse("Chef registered successfully. Please verify your email."));
+	}
 
-    // Verify email via token
-    public ResponseEntity<?> verifyEmail(String token) {
-        Optional<EmailVerificationToken> verificationTokenOpt = emailVerificationTokenRepository.findByToken(token);
-        if (!verificationTokenOpt.isPresent()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Invalid or expired token"));
-        }
+	// Verify email via token
+	public ResponseEntity<?> verifyEmail(String token) {
+		Optional<EmailVerificationToken> verificationTokenOpt = emailVerificationTokenRepository.findByToken(token);
+		if (!verificationTokenOpt.isPresent()) {
+			return ResponseEntity.badRequest().body(new MessageResponse("Error: Invalid or expired token"));
+		}
 
-        EmailVerificationToken verificationToken = verificationTokenOpt.get();
-        if (verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Token has expired"));
-        }
+		EmailVerificationToken verificationToken = verificationTokenOpt.get();
+		if (verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+			return ResponseEntity.badRequest().body(new MessageResponse("Error: Token has expired"));
+		}
 
-        Chef chef = verificationToken.getChef();
-        chef.setEmailVerified(true);  // Mark email as verified
-        chefRepository.save(chef);
+		Chef chef = verificationToken.getChef();
+		chef.setEmailVerified(true); // Mark email as verified
+		chefRepository.save(chef);
 
-        // Optionally, delete the token after use
-        emailVerificationTokenRepository.delete(verificationToken);
+		// Optionally, delete the token after use
+		emailVerificationTokenRepository.delete(verificationToken);
 
-        return ResponseEntity.ok(new MessageResponse("Email verified successfully"));
-    }
-    
-    
+		return ResponseEntity.ok(new MessageResponse("Email verified successfully"));
+	}
 
 	// Bartender login (authentication)
 	public ResponseEntity<?> authenticateChef(@Valid LoginRequest loginRequest) {
@@ -178,7 +174,6 @@ public class ChefService {
 		}
 	}
 
-	// Update Bartender information
 	public ResponseEntity<?> updateChef(Long chefid, @Valid ChefSignup chefSignup) {
 		Optional<Chef> chefOptional = chefRepository.findById(chefid);
 
@@ -187,7 +182,6 @@ public class ChefService {
 		}
 
 		Chef chef = chefOptional.get();
-		// Update bartender's information
 		chef.setUsername(chefSignup.getUsername());
 		chef.setEmail(chefSignup.getEmail());
 		chef.setPhonenumber(chefSignup.getPhonenumber());
@@ -195,7 +189,6 @@ public class ChefService {
 		chef.setSpecialty(chefSignup.getSpecialty());
 		chef.setPassword(encoder.encode(chefSignup.getPassword())); // Update password if needed
 
-		// Handle roles if needed (can be modified as per requirements)
 		Set<String> strRoles = chefSignup.getRole();
 		Set<Role> roles = new HashSet<>();
 		if (strRoles != null) {

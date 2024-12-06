@@ -66,25 +66,17 @@ public class CateringBookingService {
 		return cateringBookingRepository.findAll();
 	}
 
-	public CateringBooking getById(Long Id) {
-		return cateringBookingRepository.findById(Id)
-				.orElseThrow(() -> new ResourceNotFoundException("Id not found :" + Id));
+	public CateringBooking getById(Long id) {
+		return cateringBookingRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Id not found :" + id));
 	}
 
-	public void deleteCateringBooking(Long Id) {
-		if (cateringBookingRepository.existsById(Id)) {
-			throw new ResourceNotFoundException("Id not found :" + Id);
-		}
-		cateringBookingRepository.deleteById(Id);
-	}
-
-	@Transactional
-	public CateringBooking updateBooking(Long id, CateringBooking cateringBooking) {
+	public void deleteCateringBooking(Long id) {
 		if (!cateringBookingRepository.existsById(id)) {
-			cateringBooking.setId(id);
-			return cateringBookingRepository.save(cateringBooking);
-		} else {
-			throw new ResourceNotFoundException("id not found :" + id);
+			throw new ResourceNotFoundException("Id not found :" + id);
 		}
+		cateringBookingRepository.deleteById(id);
 	}
+
+
 }

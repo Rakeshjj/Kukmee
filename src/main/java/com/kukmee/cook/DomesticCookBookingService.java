@@ -1,7 +1,12 @@
 package com.kukmee.cook;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.kukmee.catering.CateringBooking;
+import com.kukmee.exception.ResourceNotFoundException;
 
 @Service
 public class DomesticCookBookingService {
@@ -48,6 +53,22 @@ public class DomesticCookBookingService {
 
 		return domesticCookBookingRepository.save(domesticCookBooking);
 
+	}
+
+	public DomesticCookBooking getById(Long id) {
+		return domesticCookBookingRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Id not found :" + id));
+	}
+
+	public List<DomesticCookBooking> getAll() {
+		return domesticCookBookingRepository.findAll();
+	}
+
+	public void deleteById(Long id) {
+		if (!domesticCookBookingRepository.existsById(id)) {
+			throw new ResourceNotFoundException("Id not found :" + id);
+		}
+		domesticCookBookingRepository.deleteById(id);
 	}
 
 }

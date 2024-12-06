@@ -75,10 +75,9 @@ public class OrderService {
 	}
 
 	public List<Order> getAllOrders() {
-		return orderRepository.findAll(); // Example of fetching all orders from a repository
+		return orderRepository.findAll();
 	}
 
-	// Method to convert Order to OrderResponseDTO
 	public OrderResponseDTO convertToDTO(Order order) {
 		OrderResponseDTO orderDTO = new OrderResponseDTO();
 		orderDTO.setOrderid(order.getOrderid());
@@ -87,7 +86,6 @@ public class OrderService {
 		orderDTO.setStatus(order.getStatus());
 		orderDTO.setTotalamount(order.getTotalamount());
 
-		// Convert OrderItems to OrderItemDTOs
 		List<OrderItemDTO> orderItemDTOs = order.getOrderitems().stream().map(
 				orderItem -> new OrderItemDTO(orderItem.getFooditem(), orderItem.getQuantity(), orderItem.getPrice()))
 				.collect(Collectors.toList());
@@ -101,7 +99,6 @@ public class OrderService {
 		Order existingOrder = orderRepository.findById(orderid)
 				.orElseThrow(() -> new ResourceNotFoundException("Order not found with ID: " + orderid));
 
-		// Update order fields (status, totalamount, etc.)
 		if (order.getStatus() != null) {
 			existingOrder.setStatus(order.getStatus());
 		}

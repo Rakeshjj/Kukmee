@@ -89,13 +89,4 @@ public class ChefBookingService {
 		chefBookingRepository.deleteById(id);
 	}
 
-	@Transactional
-	public ChefBooking updateBooking(Long id, ChefBooking chefBooking) {
-		if (!chefBookingRepository.existsById(id)) {
-			chefBooking.setId(id);
-			return chefBookingRepository.save(chefBooking);
-		} else {
-			throw new ResourceNotFoundException("id not found :" + id);
-		}
-	}
 }

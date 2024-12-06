@@ -1,17 +1,12 @@
 package com.kukmee.exception;
 
+
 public class ResourceNotFoundException extends RuntimeException {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public String message;
-
-	public ResourceNotFoundException(String message) {
-		super();
-		this.message = message;
-	}
-
+    public ResourceNotFoundException(String message) {
+        super(message); // Use the message field from the superclass
+    }
 }
+
