@@ -64,19 +64,19 @@ public class WebSecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Explicit CORS configuration
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/favicon.ico").permitAll() // Allow favicon without authentication
-                .requestMatchers("/api/auth/**").permitAll() 
-                .requestMatchers("/api/franchise/inquiry").permitAll()// Allow authentication endpoints
+                .requestMatchers("/api/auth/**").permitAll() // Allow authentication endpoints
+                .requestMatchers("/api/franchise/inquiry").permitAll() // Allow franchise inquiry without authentication
                 .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs.yaml").permitAll() // Allow Swagger UI
                 .requestMatchers("/api/fooditems/save").hasRole("ADMIN") // Only Admin can save food items
                 .requestMatchers("/api/bartender/book").authenticated() // Secured bartender booking endpoint
+                .requestMatchers("/payment/v1/success", "/payment/v1/cancel", "/payment/v1/checkout").permitAll() // Public access for payment endpoints
                 .anyRequest().authenticated()); // All other requests require authentication
 
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
-
-
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

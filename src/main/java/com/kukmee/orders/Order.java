@@ -32,7 +32,7 @@ public class Order {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long orderid;
+	private Long id;
 
 	@ManyToOne
 	private Customer customer;
@@ -48,5 +48,7 @@ public class Order {
 	private String status = "PENDING";
 
 	private Double totalamount;
+	
+	
 
 }

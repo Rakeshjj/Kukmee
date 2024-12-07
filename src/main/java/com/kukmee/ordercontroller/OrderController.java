@@ -1,8 +1,6 @@
 package com.kukmee.ordercontroller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +21,7 @@ import com.kukmee.orders.Order;
 import com.kukmee.orders.OrderItem;
 import com.kukmee.orders.OrderResponseDTO;
 import com.kukmee.orderservice.OrderService;
+import com.kukmee.payment.PaymentController;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -31,22 +30,22 @@ public class OrderController {
 	@Autowired
 	private OrderService orderService;
 
+	@Autowired
+	private PaymentController paymentController;
+
+	@PreAuthorize("hasRole('CUSTOMER')")
 	@PostMapping("/create")
-	public ResponseEntity<Map<String, Object>> createOrder(@RequestBody List<OrderItem> orderItems,
-			@RequestParam Long customerid) {
-		Map<String, Object> response = new HashMap<>();
+	public ResponseEntity<?> createOrder(@RequestBody List<OrderItem> orderItems, @RequestParam Long customerid) {
 		try {
 			Order order = orderService.createOrder(customerid, orderItems);
 
-			response.put("message", "Order created successfully!");
-			response.put("orderid", order.getOrderid());
+			// Initiate the payment process after order creation
+			ResponseEntity<?> paymentResponse = paymentController.checkoutOrder(order.getId());
 
-			// Return response with status 200 OK
-			return ResponseEntity.ok(response);
+			return ResponseEntity.status(HttpStatus.CREATED).body(paymentResponse.getBody());
 		} catch (Exception e) {
-			// Handle failure and return error message
-			response.put("error", "Order creation failed: " + e.getMessage());
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Order creation failed: " + e.getMessage());
 		}
 	}
 
