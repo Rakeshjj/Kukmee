@@ -4,6 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.kukmee.catering.CateringBooking;
+import com.kukmee.catering.CateringBookingRepository;
+import com.kukmee.chef.ChefBooking;
+import com.kukmee.chef.ChefBookingRepository;
 import com.kukmee.orders.Order;
 import com.kukmee.orders.OrderRepository;
 import com.stripe.Stripe;
@@ -23,9 +27,14 @@ public class StripeService {
 	@Autowired
 	private PaymentRepository paymentRepository;
 
+	@Autowired
+	private ChefBookingRepository chefBookingRepository;
+
+	@Autowired
+	private CateringBookingRepository cateringBookingRepository;
+
 	public StripeResponse checkOutOrder(Long orderid) {
-		
-		
+
 		Order order = orderRepository.findById(orderid)
 				.orElseThrow(() -> new RuntimeException("Order not found with ID: " + orderid));
 
@@ -36,7 +45,7 @@ public class StripeService {
 
 		// Create the Stripe session for checkout
 		SessionCreateParams.LineItem.PriceData.ProductData productData = SessionCreateParams.LineItem.PriceData.ProductData
-				.builder().setName("Order # " + order.getId()).build();
+				.builder().setName("Order # " + order.getTotalamount()).build();
 
 		SessionCreateParams.LineItem.PriceData priceData = SessionCreateParams.LineItem.PriceData.builder()
 				.setCurrency(order.getTotalamount() != null ? "USD" : "INR").setUnitAmount(totalAmountInCents)
@@ -65,6 +74,90 @@ public class StripeService {
 		payment.setCurrency("INR");
 		payment.setStatus("PENDING");
 		payment.setOrder(order);
+		paymentRepository.save(payment);
+
+		return StripeResponse.builder().status("SUCCESS").message("Payment session created").sessionId(session.getId())
+				.sessionUrl(session.getUrl()).build();
+	}
+
+	public StripeResponse checkOutChefBooking(Long chefBookingId) {
+		ChefBooking chefBooking = chefBookingRepository.findById(chefBookingId)
+				.orElseThrow(() -> new RuntimeException("Chef booking not found with ID: " + chefBookingId));
+
+		Long totalAmountInCents = (long) (chefBooking.getTotalAmount() * 100); // Convert to cents
+
+		Stripe.apiKey = secretKey;
+
+		SessionCreateParams.LineItem.PriceData.ProductData productData = SessionCreateParams.LineItem.PriceData.ProductData
+				.builder().setName("Chef Booking # " + chefBookingId).build();
+
+		SessionCreateParams.LineItem.PriceData priceData = SessionCreateParams.LineItem.PriceData.builder()
+				.setCurrency("INR").setUnitAmount(totalAmountInCents).setProductData(productData).build();
+
+		SessionCreateParams.LineItem lineItem = SessionCreateParams.LineItem.builder().setQuantity(1L)
+				.setPriceData(priceData).build();
+
+		SessionCreateParams params = SessionCreateParams.builder().setMode(SessionCreateParams.Mode.PAYMENT)
+				.setSuccessUrl("http://localhost:8081/payment/success?session_id={CHECKOUT_SESSION_ID}")
+				.setCancelUrl("http://localhost:8081/payment/cancel").addLineItem(lineItem).build();
+
+		Session session;
+		try {
+			session = Session.create(params);
+		} catch (StripeException e) {
+			e.printStackTrace();
+			return StripeResponse.builder().status("FAILED").message("Error creating Stripe session: " + e.getMessage())
+					.build();
+		}
+
+		Payment payment = new Payment();
+		payment.setSessionId(session.getId());
+		payment.setAmount(chefBooking.getTotalAmount());
+		payment.setCurrency("INR");
+		payment.setStatus("PENDING");
+		payment.setChefBooking(chefBooking);
+		paymentRepository.save(payment);
+
+		return StripeResponse.builder().status("SUCCESS").message("Payment session created").sessionId(session.getId())
+				.sessionUrl(session.getUrl()).build();
+	}
+
+	public StripeResponse checkOutCateringBooking(Long cateringId) {
+		CateringBooking cateringBooking = cateringBookingRepository.findById(cateringId)
+				.orElseThrow(() -> new RuntimeException("Chef booking not found with ID: " + cateringId));
+
+		Long totalAmountInCents = (long) (cateringBooking.getTotalAmount() * 100); // Convert to cents
+
+		Stripe.apiKey = secretKey;
+
+		SessionCreateParams.LineItem.PriceData.ProductData productData = SessionCreateParams.LineItem.PriceData.ProductData
+				.builder().setName("Chef Booking # " + cateringId).build();
+
+		SessionCreateParams.LineItem.PriceData priceData = SessionCreateParams.LineItem.PriceData.builder()
+				.setCurrency("INR").setUnitAmount(totalAmountInCents).setProductData(productData).build();
+
+		SessionCreateParams.LineItem lineItem = SessionCreateParams.LineItem.builder().setQuantity(1L)
+				.setPriceData(priceData).build();
+
+		SessionCreateParams params = SessionCreateParams.builder().setMode(SessionCreateParams.Mode.PAYMENT)
+				.setSuccessUrl("http://localhost:8081/payment/success?session_id={CHECKOUT_SESSION_ID}")
+				.setCancelUrl("http://localhost:8081/payment/cancel").addLineItem(lineItem).build();
+
+		Session session;
+		try {
+			session = Session.create(params);
+		} catch (StripeException e) {
+			e.printStackTrace();
+			return StripeResponse.builder().status("FAILED").message("Error creating Stripe session: " + e.getMessage())
+					.build();
+		}
+
+		Payment payment = new Payment();
+		payment.setSessionId(session.getId());
+		payment.setAmount(cateringBooking.getTotalAmount());
+		payment.setCurrency("INR");
+		payment.setStatus("PENDING");
+		payment.setCateringBooking(cateringBooking);
 		paymentRepository.save(payment);
 
 		return StripeResponse.builder().status("SUCCESS").message("Payment session created").sessionId(session.getId())

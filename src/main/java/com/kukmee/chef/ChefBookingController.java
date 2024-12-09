@@ -2,6 +2,7 @@ package com.kukmee.chef;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,11 +16,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kukmee.orders.Order;
+import com.kukmee.payment.PaymentController;
+
 @RestController
 @RequestMapping("/api/bookings")
 public class ChefBookingController {
 
 	private final ChefBookingService chefBookingService;
+
+	@Autowired
+	private PaymentController paymentController;
 
 	public ChefBookingController(ChefBookingService chefBookingService) {
 		super();
@@ -29,8 +36,16 @@ public class ChefBookingController {
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@PostMapping
 	public ResponseEntity<?> createBooking(@RequestBody ChefBooking chefBooking) {
-		chefBookingService.createBooking(chefBooking);
-		return ResponseEntity.ok("Booking creation successfully...");
+
+		try {
+			chefBookingService.createBooking(chefBooking);
+			ResponseEntity<?> paymentResponse = paymentController.checkoutBookingCreation(chefBooking.getChefBookingId());
+
+			return ResponseEntity.status(HttpStatus.CREATED).body(paymentResponse.getBody());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Order creation failed: " + e.getMessage());
+		}
 	}
 
 	@PreAuthorize("hasRole('CUSTOMER')")

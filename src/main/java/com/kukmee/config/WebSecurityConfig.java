@@ -93,8 +93,7 @@ public class WebSecurityConfig {
 						.permitAll() // Allow Swagger UI
 						.requestMatchers("/api/fooditems/save").hasRole("ADMIN") // Only Admin can save food items
 						.requestMatchers("/api/bartender/book").authenticated() // Secured bartender booking endpoint
-						.requestMatchers("/payment/v1/success", "/payment/v1/cancel", "/payment/v1/checkout")
-						.permitAll().requestMatchers("/favicon.ico").permitAll()
+						.requestMatchers("/favicon.ico").permitAll()
 // Public access for payment endpoints
 						.anyRequest().authenticated()); // All other requests require authentication
 

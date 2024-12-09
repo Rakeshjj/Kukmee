@@ -16,10 +16,22 @@ public class PaymentController {
 	@Autowired
 	private StripeService stripeService;
 
-	@PostMapping("/checkout")
-	public ResponseEntity<StripeResponse> checkoutOrder(@RequestParam Long orderId) {
-		StripeResponse response = stripeService.checkOutOrder(orderId);
+	@PostMapping("/order")
+	public ResponseEntity<StripeResponse> checkoutOrder(@RequestParam Long orderid) {
+		StripeResponse response = stripeService.checkOutOrder(orderid);
 		return ResponseEntity.ok(response);
+	}
+
+	@PostMapping("/chef")
+	public ResponseEntity<StripeResponse> checkoutBookingCreation(@RequestParam Long chefBookingId) {
+		StripeResponse stripeResponse = stripeService.checkOutChefBooking(chefBookingId);
+		return ResponseEntity.ok(stripeResponse);
+	}
+
+	@PostMapping("/catering")
+	public ResponseEntity<StripeResponse> checkoutCateringBooking(@RequestParam Long cateringId) {
+		StripeResponse stripeResponse = stripeService.checkOutCateringBooking(cateringId);
+		return ResponseEntity.ok(stripeResponse);
 	}
 
 	@PreAuthorize("hasRole('CUSTOMER')")

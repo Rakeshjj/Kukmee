@@ -26,7 +26,7 @@ public class ChefBooking {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Long chefBookingId;
 
 	@NotNull(message = "occasion cannot be null")
 	@Pattern(regexp = "^[^\\d].*", message = "Occasion cannot start with a number")

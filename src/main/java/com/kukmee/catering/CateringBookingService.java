@@ -5,10 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.kukmee.chef.ChefBooking;
 import com.kukmee.exception.ResourceNotFoundException;
-
-import jakarta.transaction.Transactional;
 
 @Service
 public class CateringBookingService {
@@ -66,16 +63,16 @@ public class CateringBookingService {
 		return cateringBookingRepository.findAll();
 	}
 
-	public CateringBooking getById(Long id) {
-		return cateringBookingRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Id not found :" + id));
+	public CateringBooking getById(Long cateringId) {
+		return cateringBookingRepository.findById(cateringId)
+				.orElseThrow(() -> new ResourceNotFoundException("Id not found :" + cateringId));
 	}
 
-	public void deleteCateringBooking(Long id) {
-		if (!cateringBookingRepository.existsById(id)) {
-			throw new ResourceNotFoundException("Id not found :" + id);
+	public void deleteCateringBooking(Long cateringId) {
+		if (!cateringBookingRepository.existsById(cateringId)) {
+			throw new ResourceNotFoundException("Id not found :" + cateringId);
 		}
-		cateringBookingRepository.deleteById(id);
+		cateringBookingRepository.deleteById(cateringId);
 	}
 
 

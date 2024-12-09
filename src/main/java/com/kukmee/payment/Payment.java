@@ -1,5 +1,7 @@
 package com.kukmee.payment;
 
+import com.kukmee.catering.CateringBooking;
+import com.kukmee.chef.ChefBooking;
 import com.kukmee.orders.Order;
 
 import jakarta.persistence.Entity;
@@ -24,7 +26,7 @@ public class Payment {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String sessionId;
-	private Long amount;
+	private double amount;
 	private Long quantity;
 	private String currency;
 	private String status;
@@ -33,4 +35,11 @@ public class Payment {
 	@JoinColumn(name = "order_id") // This column will be the foreign key in the Payment table
 	private Order order; // The associated Order entity
 
+	@ManyToOne
+	@JoinColumn(name = "chef_booking_id") // Foreign key for ChefBooking
+	private ChefBooking chefBooking;
+
+	@ManyToOne
+	@JoinColumn(name = "catering_booking_id")
+	private CateringBooking cateringBooking;
 }

@@ -2,6 +2,8 @@ package com.kukmee.catering;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kukmee.payment.PaymentController;
+
 import jakarta.validation.Valid;
 
 @RestController
@@ -20,15 +24,28 @@ public class CateringBookingController {
 
 	private final CateringBookingService cateringBookingService;
 
+	@Autowired
+	private PaymentController paymentController;
+
 	public CateringBookingController(CateringBookingService cateringBookingService) {
 		this.cateringBookingService = cateringBookingService;
 	}
 
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@PostMapping
-	public ResponseEntity<CateringBooking> createCateringBooking(@Valid @RequestBody CateringBooking cateringBooking) {
-		CateringBooking createdBooking = cateringBookingService.createCateringBooking(cateringBooking);
-		return ResponseEntity.ok(createdBooking);
+	public ResponseEntity<?> createCateringBooking(@Valid @RequestBody CateringBooking cateringBooking) {
+
+		try {
+			cateringBookingService.createCateringBooking(cateringBooking);
+			ResponseEntity<?> paymentResponse = paymentController
+					.checkoutCateringBooking(cateringBooking.getCateringId());
+
+			return ResponseEntity.status(HttpStatus.CREATED).body(paymentResponse.getBody());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Order creation failed: " + e.getMessage());
+		}
+
 	}
 
 	@PreAuthorize("hasRole('CUSTOMER')")
@@ -40,15 +57,15 @@ public class CateringBookingController {
 
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@GetMapping("/get")
-	public ResponseEntity<?> getById(@RequestParam Long id) {
-		CateringBooking getByid = cateringBookingService.getById(id);
+	public ResponseEntity<?> getById(@RequestParam Long cateringId) {
+		CateringBooking getByid = cateringBookingService.getById(cateringId);
 		return ResponseEntity.ok(getByid);
 	}
 
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@DeleteMapping("/delete")
-	public ResponseEntity<?> deleteById(@RequestParam Long id) {
-		cateringBookingService.deleteCateringBooking(id);
+	public ResponseEntity<?> deleteById(@RequestParam Long cateringId) {
+		cateringBookingService.deleteCateringBooking(cateringId);
 		return ResponseEntity.ok("Your booking deleted successfully");
 	}
 
