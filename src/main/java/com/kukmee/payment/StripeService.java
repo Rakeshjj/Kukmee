@@ -62,7 +62,7 @@ public class StripeService {
 		Payment payment = new Payment();
 		payment.setSessionId(session.getId());
 		payment.setAmount(order.getTotalamount().longValue());
-		payment.setCurrency("USD");
+		payment.setCurrency("INR");
 		payment.setStatus("PENDING");
 		payment.setOrder(order);
 		paymentRepository.save(payment);

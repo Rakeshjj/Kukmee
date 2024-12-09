@@ -24,7 +24,7 @@ public class PaymentController {
 
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@GetMapping("/success")
-	public ResponseEntity<String> handlePaymentSuccess(@RequestParam String sessionId) {
+	public ResponseEntity<String> handlePaymentSuccess(@RequestParam("session_id") String sessionId) {
 		String response = stripeService.handlePaymentSuccess(sessionId);
 		return ResponseEntity.ok(response);
 	}
