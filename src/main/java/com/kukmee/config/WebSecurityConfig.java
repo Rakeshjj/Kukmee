@@ -88,7 +88,7 @@ public class WebSecurityConfig {
 																								// authentication
 						.requestMatchers("/api/auth/**").permitAll() // Allow authentication endpoints
 						.requestMatchers("/api/franchise/inquiry").permitAll() // Allow franchise inquiry without
-																				// authentication
+						.requestMatchers("/payment/v1/success", "/payment/v1/cancel").permitAll()												// authentication
 						.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs.yaml")
 						.permitAll() // Allow Swagger UI
 						.requestMatchers("/api/fooditems/save").hasRole("ADMIN") // Only Admin can save food items
