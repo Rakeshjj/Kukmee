@@ -18,6 +18,10 @@ public class ChefBookingService {
 	private ChefBookingRepository chefBookingRepository;
 
 	public ChefBooking createBooking(ChefBooking chefBooking) {
+		
+
+		String newId = generateCustomId();
+		chefBooking.setChefBookingId(newId);
 
 		if (chefBooking.getOccasion() == null || chefBooking.getOccasion().isEmpty()) {
 			throw new IllegalArgumentException("Occasion is required");
@@ -74,9 +78,9 @@ public class ChefBookingService {
 		return chefBookingRepository.save(chefBooking);
 	}
 
-	public ChefBooking getBookingById(Long id) {
-		return chefBookingRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Id not found :" + id));
+	public ChefBooking getBookingById(String chefBookingId) {
+		return chefBookingRepository.findById(chefBookingId)
+				.orElseThrow(() -> new ResourceNotFoundException("Id not found :" + chefBookingId));
 	}
 
 	public List<ChefBooking> getAllBookings() {
@@ -84,11 +88,22 @@ public class ChefBookingService {
 	}
 
 	@Transactional
-	public void deleteBooking(Long id) {
-		if (!chefBookingRepository.existsById(id)) {
-			throw new ResourceNotFoundException("Id not found :" + id);
+	public void deleteBooking(String chefBookingId) {
+		if (!chefBookingRepository.existsById(chefBookingId)) {
+			throw new ResourceNotFoundException("Id not found :" + chefBookingId);
 		}
-		chefBookingRepository.deleteById(id);
+		chefBookingRepository.deleteById(chefBookingId);
+	}
+	
+	private String generateCustomId() {
+		String lastId = chefBookingRepository.findLastBookingId();
+
+		int nextNumber = 1;
+		if (lastId != null && lastId.startsWith("ch")) {
+			nextNumber = Integer.parseInt(lastId.substring(2)) + 1;
+		}
+
+		return "ch" + nextNumber;
 	}
 
 }

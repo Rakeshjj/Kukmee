@@ -26,7 +26,7 @@ public class StripeServiceChef {
 	@Autowired
 	private ChefBookingPaymentRepository chefBookingPaymentRepoitory;
 
-	public StripeResponse checkOutChefBooking(Long chefBookingId) {
+	public StripeResponse checkOutChefBooking(String chefBookingId) {
 		ChefBooking chefBooking = chefBookingRepository.findById(chefBookingId)
 				.orElseThrow(() -> new RuntimeException("Chef booking not found with ID: " + chefBookingId));
 

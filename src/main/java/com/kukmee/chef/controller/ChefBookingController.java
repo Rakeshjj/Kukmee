@@ -38,7 +38,8 @@ public class ChefBookingController {
 
 		try {
 			chefBookingService.createBooking(chefBooking);
-			ResponseEntity<?> paymentResponse = paymentController.checkoutBookingCreation(chefBooking.getChefBookingId());
+			ResponseEntity<?> paymentResponse = paymentController
+					.checkoutBookingCreation(chefBooking.getChefBookingId());
 
 			return ResponseEntity.status(HttpStatus.CREATED).body(paymentResponse.getBody());
 		} catch (Exception e) {
@@ -63,8 +64,8 @@ public class ChefBookingController {
 
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@GetMapping("/get")
-	public ResponseEntity<ChefBooking> getBooking(@RequestParam Long id) {
-		ChefBooking chefBooking = chefBookingService.getBookingById(id);
+	public ResponseEntity<ChefBooking> getBooking(@RequestParam String chefBookingId) {
+		ChefBooking chefBooking = chefBookingService.getBookingById(chefBookingId);
 		return ResponseEntity.ok(chefBooking);
 	}
 
@@ -77,8 +78,8 @@ public class ChefBookingController {
 
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteBooking(@RequestParam Long id) {
-		chefBookingService.deleteBooking(id);
+	public ResponseEntity<?> deleteBooking(@RequestParam String chefBookingId) {
+		chefBookingService.deleteBooking(chefBookingId);
 		return ResponseEntity.ok("Booking deleted successfully.");
 	}
 

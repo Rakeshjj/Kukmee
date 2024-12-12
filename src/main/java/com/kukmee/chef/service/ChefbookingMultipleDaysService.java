@@ -15,7 +15,7 @@ public class ChefbookingMultipleDaysService {
 	public ChefBookingMultipleDays createBooking(ChefBookingMultipleDays chefBooking) {
 
 		String newId = generateCustomId();
-		chefBooking.setChefDayId(newId);;
+		chefBooking.setChefDayId(newId);
 
 		if (chefBooking.getOccasion() == null || chefBooking.getOccasion().isEmpty()) {
 			throw new IllegalArgumentException("Occasion is required");

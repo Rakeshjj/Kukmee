@@ -37,7 +37,7 @@ public class PaymentController {
 	}
 
 	@PostMapping("/chef")
-	public ResponseEntity<StripeResponse> checkoutBookingCreation(@RequestParam Long chefBookingId) {
+	public ResponseEntity<StripeResponse> checkoutBookingCreation(@RequestParam String chefBookingId) {
 		StripeResponse stripeResponse = stripeServiceChef.checkOutChefBooking(chefBookingId);
 		return ResponseEntity.ok(stripeResponse);
 	}

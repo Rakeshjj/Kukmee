@@ -25,8 +25,7 @@ import lombok.Setter;
 public class ChefBooking {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long chefBookingId;
+	private String chefBookingId;
 
 	@NotNull(message = "occasion cannot be null")
 	@Pattern(regexp = "^[^\\d].*", message = "Occasion cannot start with a number")

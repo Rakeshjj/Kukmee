@@ -7,6 +7,6 @@ import com.kukmee.chef.ChefBookingMultipleDays;
 
 public interface ChefBookingMultipleDaysRepo extends JpaRepository<ChefBookingMultipleDays, String>{
     
-	@Query("SELECT id FROM ChefMonthlyBooking ORDER BY id DESC LIMIT 1")
+	@Query("SELECT chefDayId FROM ChefBookingMultipleDays ORDER BY chefDayId DESC LIMIT 1")
 	String findLastBookingId();
 }

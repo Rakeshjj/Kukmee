@@ -1,5 +1,9 @@
 package com.kukmee.chef.service;
 
+import java.lang.StackWalker.Option;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,6 +56,14 @@ public class ChefMonthlyBookingService {
 		booking.setTotalAmount(totalAmount);
 
 		return bookingRepository.save(booking);
+	}
+
+	public List<ChefMonthlyBooking> getAllBookings() {
+		return bookingRepository.findAll();
+	}
+	
+	public Optional<ChefMonthlyBooking> getById(String id){
+		return bookingRepository.findById(id);
 	}
 
 	private String generateCustomId() {
