@@ -1,9 +1,9 @@
 package com.kukmee.payment;
 
-import com.kukmee.catering.CateringBooking;
-import com.kukmee.chef.ChefBooking;
-import com.kukmee.orders.Order;
+import com.kukmee.cook.DomesticCookBooking;
+import com.kukmee.cook.MonthlyCookBooking;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,29 +17,28 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
-public class Payment {
+public class CookBookingPayment {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	@Column(name = "session_id", nullable = false, unique = true)
 	private String sessionId;
+
 	private double amount;
-	private Long quantity;
 	private String currency;
 	private String status;
-
+	
 	@ManyToOne
-	@JoinColumn(name = "order_id") // This column will be the foreign key in the Payment table
-	private Order order; // The associated Order entity
-
+	@JoinColumn(name = "cook_booking_id")
+	private DomesticCookBooking cookBooking;
+	
+	
 	@ManyToOne
-	@JoinColumn(name = "chef_booking_id") // Foreign key for ChefBooking
-	private ChefBooking chefBooking;
-
-	@ManyToOne
-	@JoinColumn(name = "catering_booking_id")
-	private CateringBooking cateringBooking;
+	@JoinColumn(name = "monthly_cook_booking_id")
+	private MonthlyCookBooking monthlyCookBooking;
 }

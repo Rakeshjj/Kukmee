@@ -60,14 +60,14 @@ public class MonthlyCookBookingService {
 		return monthlyCookBookings;
 	}
 
-	public MonthlyCookBooking getById(Long id) {
-		return bookingRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Id not found :" + id));
+	public MonthlyCookBooking getById(Long monthlyCookId) {
+		return bookingRepository.findById(monthlyCookId).orElseThrow(() -> new ResourceNotFoundException("Id not found :" + monthlyCookId));
 	}
 
-	public void deleteById(Long id) {
-		if (!bookingRepository.existsById(id)) {
-			throw new ResourceNotFoundException("Id not found :" + id);
+	public void deleteById(Long monthlyCookId) {
+		if (!bookingRepository.existsById(monthlyCookId)) {
+			throw new ResourceNotFoundException("Id not found :" + monthlyCookId);
 		}
-		bookingRepository.deleteById(id);
+		bookingRepository.deleteById(monthlyCookId);
 	}
 }

@@ -62,7 +62,6 @@ public class WebSecurityConfig {
 	@Bean
 	protected ResourceHttpRequestHandler faviconRequestHandler() {
 		ResourceHttpRequestHandler requestHandler = new ResourceHttpRequestHandler();
-		// Set the locations to where your resources (like the favicon) are located
 		List<Resource> locations = Collections.singletonList(new ClassPathResource("static/favicon.ico"));
 		requestHandler.setLocations(locations);
 		return requestHandler;
@@ -84,18 +83,19 @@ public class WebSecurityConfig {
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.cors(cors -> cors.configurationSource(corsConfigurationSource())) // Explicit CORS configuration
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/favicon.ico").permitAll() // Allow favicon without
-																								// authentication
+				.authorizeHttpRequests(auth -> auth.requestMatchers("/favicon.ico").permitAll()
 						.requestMatchers("/api/auth/**").permitAll() // Allow authentication endpoints
 						.requestMatchers("/api/franchise/inquiry").permitAll() // Allow franchise inquiry without
-						.requestMatchers("/payment/v1/success", "/payment/v1/cancel").permitAll()												// authentication
+						.requestMatchers("/payment/v1/success", "/payment/v1/cancel").hasRole("CUSTOMER")
+						.requestMatchers("/payment/v1/chefsuccess", "/payment/v1/chefcancel").permitAll()
+						.requestMatchers("/payment/v1/cateringsuccess", "/payment/v1/cateringcancel").permitAll()
+						.requestMatchers("/payment/v1/cooksuccess", "/payment/v1/cookcancel").permitAll()
+						.requestMatchers("/payment/v1/monthlycooksuccess", "/payment/v1/monthlycookcancel").permitAll()
 						.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs.yaml")
 						.permitAll() // Allow Swagger UI
 						.requestMatchers("/api/fooditems/save").hasRole("ADMIN") // Only Admin can save food items
-						.requestMatchers("/api/bartender/book").authenticated() // Secured bartender booking endpoint
-						.requestMatchers("/favicon.ico").permitAll()
-// Public access for payment endpoints
-						.anyRequest().authenticated()); // All other requests require authentication
+						.requestMatchers("/api/bartender/book").authenticated().requestMatchers("/favicon.ico")
+						.permitAll().anyRequest().authenticated()); // All other requests require authentication
 
 		http.authenticationProvider(authenticationProvider());
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -106,10 +106,8 @@ public class WebSecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("http://127.0.0.1:5500")); // Replace with the appropriate frontend
-																			// URL(s)
-		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Allow required HTTP
-																								// methods
+		configuration.setAllowedOrigins(List.of("http://127.0.0.1:5500"));
+		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 		configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
 		configuration.setAllowCredentials(true);
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

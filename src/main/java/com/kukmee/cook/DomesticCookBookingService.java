@@ -55,20 +55,20 @@ public class DomesticCookBookingService {
 
 	}
 
-	public DomesticCookBooking getById(Long id) {
-		return domesticCookBookingRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Id not found :" + id));
+	public DomesticCookBooking getById(Long cookId) {
+		return domesticCookBookingRepository.findById(cookId)
+				.orElseThrow(() -> new ResourceNotFoundException("Id not found :" + cookId));
 	}
 
 	public List<DomesticCookBooking> getAll() {
 		return domesticCookBookingRepository.findAll();
 	}
 
-	public void deleteById(Long id) {
-		if (!domesticCookBookingRepository.existsById(id)) {
-			throw new ResourceNotFoundException("Id not found :" + id);
+	public void deleteById(Long cookId) {
+		if (!domesticCookBookingRepository.existsById(cookId)) {
+			throw new ResourceNotFoundException("Id not found :" + cookId);
 		}
-		domesticCookBookingRepository.deleteById(id);
+		domesticCookBookingRepository.deleteById(cookId);
 	}
 
 }

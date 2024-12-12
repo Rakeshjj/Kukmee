@@ -40,7 +40,7 @@ public class OrderController {
 			Order order = orderService.createOrder(customerid, orderItems);
 
 			// Initiate the payment process after order creation
-			ResponseEntity<?> paymentResponse = paymentController.checkoutOrder(order.getId());
+			ResponseEntity<?> paymentResponse = paymentController.checkoutOrder(order.getOrderId());
 
 			return ResponseEntity.status(HttpStatus.CREATED).body(paymentResponse.getBody());
 		} catch (Exception e) {

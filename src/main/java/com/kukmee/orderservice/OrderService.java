@@ -80,7 +80,7 @@ public class OrderService {
 
 	public OrderResponseDTO convertToDTO(Order order) {
 		OrderResponseDTO orderDTO = new OrderResponseDTO();
-		orderDTO.setOrderid(order.getId());
+		orderDTO.setOrderid(order.getOrderId());
 		orderDTO.setCustomer(order.getCustomer());
 		orderDTO.setOrderdate(order.getOrderdate());
 		orderDTO.setStatus(order.getStatus());

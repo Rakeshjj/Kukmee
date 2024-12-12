@@ -1,10 +1,12 @@
-package com.kukmee.chef;
+package com.kukmee.chef.service;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.kukmee.chef.ChefBooking;
+import com.kukmee.chef.repo.ChefBookingRepository;
 import com.kukmee.exception.ResourceNotFoundException;
 
 import jakarta.transaction.Transactional;
