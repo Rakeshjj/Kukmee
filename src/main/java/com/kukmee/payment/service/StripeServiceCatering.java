@@ -44,8 +44,8 @@ public class StripeServiceCatering {
 				.setPriceData(priceData).build();
 
 		SessionCreateParams params = SessionCreateParams.builder().setMode(SessionCreateParams.Mode.PAYMENT)
-				.setSuccessUrl("http://localhost:8081/payment/v1/cateringsuccess?session_id={CHECKOUT_SESSION_ID}")
-				.setCancelUrl("http://localhost:8081/payment/v1/cateringcancel").addLineItem(lineItem).build();
+				.setSuccessUrl("http://localhost:8082/payment/v1/cateringsuccess?session_id={CHECKOUT_SESSION_ID}")
+				.setCancelUrl("http://localhost:8082/payment/v1/cateringcancel").addLineItem(lineItem).build();
 
 		Session session;
 		try {

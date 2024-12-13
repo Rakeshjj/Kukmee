@@ -41,6 +41,18 @@ public class PaymentController {
 		StripeResponse stripeResponse = stripeServiceChef.checkOutChefBooking(chefBookingId);
 		return ResponseEntity.ok(stripeResponse);
 	}
+	
+	@PostMapping("/chefMul")
+	public ResponseEntity<StripeResponse> checkoutBookingCreationMultiple(@RequestParam String chefDayId) {
+		StripeResponse stripeResponse = stripeServiceChef.checkOutChefBookingMultiple(chefDayId);
+		return ResponseEntity.ok(stripeResponse);
+	}
+	
+	@PostMapping("/chefMonthly")
+	public ResponseEntity<StripeResponse> checkoutBookingCreationMonthly(@RequestParam String id) {
+		StripeResponse stripeResponse = stripeServiceChef.checkOutChefBookingMonthly(id);
+		return ResponseEntity.ok(stripeResponse);
+	}
 
 	@PostMapping("/catering")
 	public ResponseEntity<StripeResponse> checkoutCateringBooking(@RequestParam Long cateringId) {

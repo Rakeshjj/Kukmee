@@ -48,8 +48,8 @@ public class StripeServiceOrder {
 				.setPriceData(priceData).build();
 
 		SessionCreateParams params = SessionCreateParams.builder().setMode(SessionCreateParams.Mode.PAYMENT)
-				.setSuccessUrl("http://localhost:8081/payment/v1/success?session_id={CHECKOUT_SESSION_ID}")
-				.setCancelUrl("http://localhost:8081/payment/v1/cancel").addLineItem(lineItem).build();
+				.setSuccessUrl("http://localhost:8082/payment/v1/success?session_id={CHECKOUT_SESSION_ID}")
+				.setCancelUrl("http://localhost:8082/payment/v1/cancel").addLineItem(lineItem).build();
 
 		Session session;
 		try {

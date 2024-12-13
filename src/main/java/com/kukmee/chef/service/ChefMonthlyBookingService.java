@@ -1,6 +1,5 @@
 package com.kukmee.chef.service;
 
-import java.lang.StackWalker.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,10 +69,10 @@ public class ChefMonthlyBookingService {
 		String lastId = bookingRepository.findLastBookingId();
 
 		int nextNumber = 1;
-		if (lastId != null && lastId.startsWith("ch")) {
+		if (lastId != null && lastId.startsWith("mb")) {
 			nextNumber = Integer.parseInt(lastId.substring(2)) + 1;
 		}
 
-		return "ch" + nextNumber;
+		return "mb" + nextNumber;
 	}
 }

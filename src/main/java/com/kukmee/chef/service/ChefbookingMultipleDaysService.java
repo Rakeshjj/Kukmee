@@ -76,10 +76,10 @@ public class ChefbookingMultipleDaysService {
 		String lastId = chefBookingMultipleDaysRepo.findLastBookingId();
 
 		int nextNumber = 1;
-		if (lastId != null && lastId.startsWith("chmd")) {
+		if (lastId != null && lastId.startsWith("mu")) {
 			nextNumber = Integer.parseInt(lastId.substring(2)) + 1;
 		}
 
-		return "chmd" + nextNumber;
+		return "mu" + nextNumber;
 	}
 }

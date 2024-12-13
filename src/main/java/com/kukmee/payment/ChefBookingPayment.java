@@ -1,6 +1,8 @@
 package com.kukmee.payment;
 
 import com.kukmee.chef.ChefBooking;
+import com.kukmee.chef.ChefBookingMultipleDays;
+import com.kukmee.chef.ChefMonthlyBooking;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,19 +22,26 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 public class ChefBookingPayment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    
-    @Column(name = "session_id", nullable = false, unique = true)
-    private String sessionId;
-    
-    private double amount;
-    private String currency;
-    private String status;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "chef_booking_id", nullable = false)
-    private ChefBooking chefBooking;
+	@Column(name = "session_id", nullable = false, unique = true)
+	private String sessionId;
+
+	private double amount;
+	private String currency;
+	private String status;
+
+	@ManyToOne
+	@JoinColumn(name = "chef_booking_id")
+	private ChefBooking chefBooking;
+
+	@ManyToOne
+	@JoinColumn(name = "chef_booking_multiple")
+	private ChefBookingMultipleDays chefBookingMultipleDays;
+	
+	@ManyToOne
+	@JoinColumn(name = "chef_book_monthly")
+	private ChefMonthlyBooking chefMonthlyBooking;
 }
-

@@ -86,7 +86,7 @@ public class WebSecurityConfig {
 				.authorizeHttpRequests(auth -> auth.requestMatchers("/favicon.ico").permitAll()
 						.requestMatchers("/api/auth/**").permitAll() // Allow authentication endpoints
 						.requestMatchers("/api/franchise/inquiry").permitAll() // Allow franchise inquiry without
-						.requestMatchers("/payment/v1/success", "/payment/v1/cancel").hasRole("CUSTOMER")
+						.requestMatchers("/payment/v1/success", "/payment/v1/cancel").permitAll()
 						.requestMatchers("/payment/v1/chefsuccess", "/payment/v1/chefcancel").permitAll()
 						.requestMatchers("/payment/v1/cateringsuccess", "/payment/v1/cateringcancel").permitAll()
 						.requestMatchers("/payment/v1/cooksuccess", "/payment/v1/cookcancel").permitAll()
