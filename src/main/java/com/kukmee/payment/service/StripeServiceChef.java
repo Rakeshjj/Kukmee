@@ -72,6 +72,7 @@ public class StripeServiceChef {
 		payment.setCurrency("INR");
 		payment.setStatus("PENDING");
 		payment.setChefBooking(chefBooking);
+		payment.setPaymentId(session.getPaymentIntent());
 		chefBookingPaymentRepoitory.save(payment);
 
 		return StripeResponse.builder().status("SUCCESS").message("Payment session created").sessionId(session.getId())

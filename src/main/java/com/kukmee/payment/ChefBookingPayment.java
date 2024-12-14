@@ -29,6 +29,9 @@ public class ChefBookingPayment {
 	@Column(name = "session_id", nullable = false, unique = true)
 	private String sessionId;
 
+	@Column(name = "payment_id") 
+	private String paymentId;
+
 	private double amount;
 	private String currency;
 	private String status;
@@ -40,7 +43,7 @@ public class ChefBookingPayment {
 	@ManyToOne
 	@JoinColumn(name = "chef_booking_multiple")
 	private ChefBookingMultipleDays chefBookingMultipleDays;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "chef_book_monthly")
 	private ChefMonthlyBooking chefMonthlyBooking;
