@@ -1,13 +1,16 @@
 package com.kukmee.cook.service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.kukmee.cook.CookBookingOneMeal;
-import com.kukmee.cook.repo.CookBookingRepoOneMeal;
+import com.kukmee.cook.CookBooking;
+import com.kukmee.cook.repo.CookBookingRepo;
 import com.kukmee.exception.ResourceNotFoundException;
 
 import jakarta.transaction.Transactional;
@@ -16,9 +19,9 @@ import jakarta.transaction.Transactional;
 public class CookBookingServiceOneMeal {
 
 	@Autowired
-	private CookBookingRepoOneMeal cookBookingRepoOneMeal;
+	private CookBookingRepo cookBookingRepo;
 
-	public CookBookingOneMeal createBooking(CookBookingOneMeal cookBookingOneMeal) {
+	public CookBooking createBooking(CookBooking cookBookingOneMeal) {
 
 		String newId = generateCustomId();
 		cookBookingOneMeal.setCookBookingId(newId);
@@ -45,18 +48,23 @@ public class CookBookingServiceOneMeal {
 			throw new IllegalArgumentException("Cuisine is required for lunch and dinner bookings.");
 		}
 
+		String subscriptionDuration = cookBookingOneMeal.getSubscriptionDuration();
+		LocalDate startDate = LocalDate.parse(cookBookingOneMeal.getDate(), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+		LocalDate endDate = calculateEndDate(startDate, subscriptionDuration);
+
+		cookBookingOneMeal.setEndDate(endDate.toString());
+
 		if (cookBookingOneMeal.getMealType().equalsIgnoreCase("breakfast")) {
 			cookBookingOneMeal.setCuisine(null);
 		}
 
 		int people = cookBookingOneMeal.getNumberOfPeople();
+		
 		double basePrice = 219 + ((people - 1) / 4) * 200;
-
 		double dishCharges = cookBookingOneMeal.getDishes().size() * 200;
-
 		double discount = 0;
 		if (cookBookingOneMeal.getDishes().size() > 5) {
-			discount = 100; // Adjust discount threshold as needed
+			discount = 100;
 		}
 
 		double subtotal = basePrice + dishCharges - discount;
@@ -75,28 +83,43 @@ public class CookBookingServiceOneMeal {
 		cookBookingOneMeal.setAdvancePayment(advance);
 		cookBookingOneMeal.setBalanceAmount(balance);
 
-		return cookBookingRepoOneMeal.save(cookBookingOneMeal);
+		return cookBookingRepo.save(cookBookingOneMeal);
 	}
 
-	public CookBookingOneMeal getBookingById(String cookBookingId) {
-		return cookBookingRepoOneMeal.findById(cookBookingId)
+	private LocalDate calculateEndDate(LocalDate startDate, String duration) {
+		switch (duration) {
+		case "1 month":
+			return startDate.plus(1, ChronoUnit.MONTHS);
+		case "3 months":
+			return startDate.plus(3, ChronoUnit.MONTHS);
+		case "6 months":
+			return startDate.plus(6, ChronoUnit.MONTHS);
+		case "1 year":
+			return startDate.plus(1, ChronoUnit.YEARS);
+		default:
+			throw new IllegalArgumentException("Invalid subscription duration");
+		}
+	}
+
+	public CookBooking getBookingById(String cookBookingId) {
+		return cookBookingRepo.findById(cookBookingId)
 				.orElseThrow(() -> new ResourceNotFoundException("Id not found :" + cookBookingId));
 	}
 
-	public List<CookBookingOneMeal> getAllBookings() {
-		return cookBookingRepoOneMeal.findAll();
+	public List<CookBooking> getAllBookings() {
+		return cookBookingRepo.findAll();
 	}
 
 	@Transactional
 	public void deleteBooking(String cookBookingId) {
-		if (!cookBookingRepoOneMeal.existsById(cookBookingId)) {
+		if (!cookBookingRepo.existsById(cookBookingId)) {
 			throw new ResourceNotFoundException("Id not found :" + cookBookingId);
 		}
-		cookBookingRepoOneMeal.deleteById(cookBookingId);
+		cookBookingRepo.deleteById(cookBookingId);
 	}
 
-	public CookBookingOneMeal updateCookBooking(CookBookingOneMeal cookBooking, String cookBookingId) {
-		CookBookingOneMeal updatedCookBooking = cookBookingRepoOneMeal.findById(cookBookingId)
+	public CookBooking updateCookBooking(CookBooking cookBooking, String cookBookingId) {
+		CookBooking updatedCookBooking = cookBookingRepo.findById(cookBookingId)
 				.orElseThrow(() -> new ResourceNotFoundException("ID NOT FOUND: " + cookBookingId));
 
 		if (Objects.nonNull(cookBooking.getOccasion()) && !"".equals(cookBooking.getOccasion())) {
@@ -163,11 +186,11 @@ public class CookBookingServiceOneMeal {
 			updatedCookBooking.setBalanceAmount(cookBooking.getBalanceAmount());
 		}
 
-		return cookBookingRepoOneMeal.save(updatedCookBooking);
+		return cookBookingRepo.save(updatedCookBooking);
 	}
 
 	private String generateCustomId() {
-		String lastId = cookBookingRepoOneMeal.findLastBookingId();
+		String lastId = cookBookingRepo.findLastBookingId();
 
 		int nextNumber = 1;
 		if (lastId != null && lastId.startsWith("ch")) {

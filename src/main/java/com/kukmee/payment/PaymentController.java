@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.kukmee.payment.service.StripeServiceCatering;
 import com.kukmee.payment.service.StripeServiceChef;
+import com.kukmee.payment.service.StripeServiceCook;
 import com.kukmee.payment.service.StripeServiceOrder;
 
 @RestController
@@ -25,6 +26,9 @@ public class PaymentController {
 	@Autowired
 	private StripeServiceChef stripeServiceChef;
 
+	@Autowired
+	private StripeServiceCook stripeServiceCook;
+
 	@PostMapping("/order")
 	public ResponseEntity<StripeResponse> checkoutOrder(@RequestParam Long orderid) {
 		StripeResponse response = stripeServiceOrder.checkOutOrder(orderid);
@@ -34,6 +38,12 @@ public class PaymentController {
 	@PostMapping("/chef")
 	public ResponseEntity<StripeResponse> checkoutBookingCreation(@RequestParam String chefBookingId) {
 		StripeResponse stripeResponse = stripeServiceChef.checkOutChefBooking(chefBookingId);
+		return ResponseEntity.ok(stripeResponse);
+	}
+
+	@PostMapping("/cook")
+	public ResponseEntity<StripeResponse> checkoutBookingCook(@RequestParam String cookBookingId) {
+		StripeResponse stripeResponse = stripeServiceCook.checkOutCookBooking(cookBookingId);
 		return ResponseEntity.ok(stripeResponse);
 	}
 
@@ -88,6 +98,18 @@ public class PaymentController {
 	@GetMapping("/cateringcancel")
 	public ResponseEntity<String> handlePaymentCancel(@RequestParam String sessionId) {
 		String response = stripeServiceCatering.handlePaymentFailure(sessionId);
+		return ResponseEntity.ok(response);
+	}
+	
+	@GetMapping("/cooksuccess")
+	public ResponseEntity<String> handlePaymentSuccessCook(@RequestParam("session_id") String sessionId) {
+		String response = stripeServiceCook.handlePaymentSuccess(sessionId);
+		return ResponseEntity.ok(response);
+	}
+
+	@GetMapping("/cookcancel")
+	public ResponseEntity<String> handlePaymentCancelCook(@RequestParam String sessionId) {
+		String response = stripeServiceCook.handlePaymentFailure(sessionId);
 		return ResponseEntity.ok(response);
 	}
 }

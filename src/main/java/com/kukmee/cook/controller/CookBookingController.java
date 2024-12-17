@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.kukmee.cook.CookBookingOneMeal;
+import com.kukmee.cook.CookBooking;
 import com.kukmee.cook.service.CookBookingServiceOneMeal;
 import com.kukmee.payment.PaymentController;
 
@@ -30,12 +30,11 @@ public class CookBookingController {
 
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@PostMapping
-	public ResponseEntity<?> createBooking(@RequestBody CookBookingOneMeal cookBookingOneMeal) {
+	public ResponseEntity<?> createBooking(@RequestBody CookBooking cookBooking) {
 
 		try {
-			cookBookingServiceOneMeal.createBooking(cookBookingOneMeal);
-			ResponseEntity<?> paymentResponse = paymentController
-					.checkoutBookingCreation(cookBookingOneMeal.getCookBookingId());
+			cookBookingServiceOneMeal.createBooking(cookBooking);
+			ResponseEntity<?> paymentResponse = paymentController.checkoutBookingCook(cookBooking.getCookBookingId());
 
 			return ResponseEntity.status(HttpStatus.CREATED).body(paymentResponse.getBody());
 		} catch (Exception e) {
@@ -46,29 +45,29 @@ public class CookBookingController {
 
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@PostMapping("/lunch")
-	public ResponseEntity<?> createLunchBooking(@RequestBody CookBookingOneMeal cookBookingOneMeal) {
+	public ResponseEntity<?> createLunchBooking(@RequestBody CookBooking cookBookingOneMeal) {
 		cookBookingServiceOneMeal.createBooking(cookBookingOneMeal);
 		return ResponseEntity.ok("Lunch booking created successfully!");
 	}
 
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@PostMapping("/dinner")
-	public ResponseEntity<?> createDinnerBooking(@RequestBody CookBookingOneMeal cookBookingOneMeal) {
+	public ResponseEntity<?> createDinnerBooking(@RequestBody CookBooking cookBookingOneMeal) {
 		cookBookingServiceOneMeal.createBooking(cookBookingOneMeal);
 		return ResponseEntity.ok("Dinner booking created successfully!");
 	}
 
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@GetMapping("/get")
-	public ResponseEntity<CookBookingOneMeal> getBooking(@RequestParam String cookBookingId) {
-		CookBookingOneMeal chefBooking = cookBookingServiceOneMeal.getBookingById(cookBookingId);
+	public ResponseEntity<CookBooking> getBooking(@RequestParam String cookBookingId) {
+		CookBooking chefBooking = cookBookingServiceOneMeal.getBookingById(cookBookingId);
 		return ResponseEntity.ok(chefBooking);
 	}
 
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@GetMapping("/getAll")
-	public ResponseEntity<List<CookBookingOneMeal>> getAllbookings() {
-		List<CookBookingOneMeal> bookings = cookBookingServiceOneMeal.getAllBookings();
+	public ResponseEntity<List<CookBooking>> getAllbookings() {
+		List<CookBooking> bookings = cookBookingServiceOneMeal.getAllBookings();
 		return ResponseEntity.ok(bookings);
 	}
 
@@ -81,7 +80,7 @@ public class CookBookingController {
 
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@DeleteMapping("/update")
-	public ResponseEntity<?> updateBooking(@RequestBody CookBookingOneMeal cookBookingOneMeal,
+	public ResponseEntity<?> updateBooking(@RequestBody CookBooking cookBookingOneMeal,
 			@RequestParam String cookBookingId) {
 		cookBookingServiceOneMeal.updateCookBooking(cookBookingOneMeal, cookBookingId);
 		return ResponseEntity.ok("Booking deleted successfully.");

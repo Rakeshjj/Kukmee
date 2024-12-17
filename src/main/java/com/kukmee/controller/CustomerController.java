@@ -58,6 +58,7 @@ public class CustomerController {
 	}
 
 	@PostMapping("/customersignup")
+	@CrossOrigin(origins = "http://127.0.0.1:5501")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody CustomerSignUp signUpResquest) {
 		if (customerRepository.existsByUsername(signUpResquest.getUsername())) {
 			return ResponseEntity.badRequest().body(new MessageResponse("Error: username is already Exists"));
