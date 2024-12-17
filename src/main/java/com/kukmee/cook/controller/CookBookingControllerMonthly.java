@@ -1,4 +1,4 @@
-package com.kukmee.chef.controller;
+package com.kukmee.cook.controller;
 
 import java.util.List;
 
@@ -9,34 +9,32 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.kukmee.chef.ChefBookingMultipleDays;
-import com.kukmee.chef.ChefMonthlyBooking;
-import com.kukmee.chef.service.ChefMonthlyBookingService;
+import com.kukmee.cook.CookBookingMonthly;
+import com.kukmee.cook.service.CookMonthlyBookingService;
 import com.kukmee.payment.PaymentController;
 
 @RestController
 @RequestMapping("/api/monthlybookings")
-public class ChefMonthlyBookingController {
+public class CookBookingControllerMonthly {
 
 	@Autowired
-	private ChefMonthlyBookingService chefBookingService;
+	private CookMonthlyBookingService cookBookingService;
 
 	@Autowired
 	private PaymentController paymentController;
 
 	@PreAuthorize("hasRole('CUSTOMER')")
-	@PostMapping
-	public ResponseEntity<?> createBooking(@RequestBody ChefMonthlyBooking chefBooking) {
+	@PostMapping("/cook")
+	public ResponseEntity<?> createBooking(@RequestBody CookBookingMonthly cookBookingMonthly) {
 
 		try {
-			chefBookingService.createBooking(chefBooking);
-			ResponseEntity<?> paymentResponse = paymentController.checkoutBookingCreationMonthly(chefBooking.getId());
+			cookBookingService.createBooking(cookBookingMonthly);
+			ResponseEntity<?> paymentResponse = paymentController.checkoutBookingCreationMonthly(cookBookingMonthly.getId());
 
 			return ResponseEntity.status(HttpStatus.CREATED).body(paymentResponse.getBody());
 		} catch (Exception e) {
@@ -44,33 +42,34 @@ public class ChefMonthlyBookingController {
 					.body("Order creation failed: " + e.getMessage());
 		}
 	}
-
+	
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@GetMapping("/get")
-	public ResponseEntity<ChefMonthlyBooking> getBooking(@RequestParam String id) {
-		ChefMonthlyBooking chefBooking = chefBookingService.getBookingById(id);
+	public ResponseEntity<CookBookingMonthly> getBooking(@RequestParam String id) {
+		CookBookingMonthly chefBooking = cookBookingService.getBookingById(id);
 		return ResponseEntity.ok(chefBooking);
 	}
 
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@GetMapping("/getAll")
-	public ResponseEntity<List<ChefMonthlyBooking>> getAllbookings() {
-		List<ChefMonthlyBooking> bookings = chefBookingService.getAllBookings();
+	public ResponseEntity<List<CookBookingMonthly>> getAllbookings() {
+		List<CookBookingMonthly> bookings = cookBookingService.getAllBookings();
 		return ResponseEntity.ok(bookings);
 	}
 
 	@PreAuthorize("hasRole('CUSTOMER')")
-	@DeleteMapping("/delete")
+	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteBooking(@RequestParam String id) {
-		chefBookingService.deleteBooking(id);
+		cookBookingService.deleteBooking(id);
 		return ResponseEntity.ok("Booking deleted successfully.");
 	}
 
 	@PreAuthorize("hasRole('CUSTOMER')")
-	@PutMapping("/update")
-	public ResponseEntity<?> updateBooking(@RequestBody ChefMonthlyBooking chefBooking, @RequestParam String id) {
-		chefBookingService.updateMonthlyBooking(chefBooking, id);
-		return ResponseEntity.ok("Booking Updated successfully.");
+	@DeleteMapping("/update")
+	public ResponseEntity<?> updateBooking(@RequestBody CookBookingMonthly cookBookingMonthly,
+			@RequestParam String id) {
+		cookBookingService.updateMonthlyBooking(cookBookingMonthly, id);
+		return ResponseEntity.ok("Booking deleted successfully.");
 	}
 
 }

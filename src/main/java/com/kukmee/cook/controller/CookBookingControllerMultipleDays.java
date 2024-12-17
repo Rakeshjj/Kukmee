@@ -1,4 +1,4 @@
-package com.kukmee.chef.controller;
+package com.kukmee.cook.controller;
 
 import java.util.List;
 
@@ -9,35 +9,33 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.kukmee.chef.ChefBooking;
-import com.kukmee.chef.ChefBookingMultipleDays;
-import com.kukmee.chef.service.ChefbookingMultipleDaysService;
+import com.kukmee.cook.CookBookingMultipleDays;
+import com.kukmee.cook.service.CookbookingMultipleDaysService;
 import com.kukmee.payment.PaymentController;
 
 @RestController
-@RequestMapping("/api/multipledays")
-public class ChefBookingMultipleDaysController {
+@RequestMapping("/api/bookings")
+public class CookBookingControllerMultipleDays {
 
 	@Autowired
-	private ChefbookingMultipleDaysService chefbookingMultipleDaysService;
+	private CookbookingMultipleDaysService cookbookingMultipleDaysService;
 
 	@Autowired
 	private PaymentController paymentController;
 
 	@PreAuthorize("hasRole('CUSTOMER')")
-	@PostMapping
-	public ResponseEntity<?> createBooking(@RequestBody ChefBookingMultipleDays chefBooking) {
+	@PostMapping("/cookmultiple")
+	public ResponseEntity<?> createBooking(@RequestBody CookBookingMultipleDays cookBooking) {
 
 		try {
-			chefbookingMultipleDaysService.createBooking(chefBooking);
+			cookbookingMultipleDaysService.createBooking(cookBooking);
 			ResponseEntity<?> paymentResponse = paymentController
-					.checkoutBookingCreationMultiple(chefBooking.getChefDayId());
+					.checkoutBookingCreationMultiple(cookBooking.getCookDayId());
 
 			return ResponseEntity.status(HttpStatus.CREATED).body(paymentResponse.getBody());
 		} catch (Exception e) {
@@ -48,30 +46,31 @@ public class ChefBookingMultipleDaysController {
 
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@GetMapping("/get")
-	public ResponseEntity<ChefBookingMultipleDays> getBooking(@RequestParam String chefDayId) {
-		ChefBookingMultipleDays chefBooking = chefbookingMultipleDaysService.getById(chefDayId);
+	public ResponseEntity<CookBookingMultipleDays> getBooking(@RequestParam String cookDayId) {
+		CookBookingMultipleDays chefBooking = cookbookingMultipleDaysService.getBookingById(cookDayId);
 		return ResponseEntity.ok(chefBooking);
 	}
 
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@GetMapping("/getAll")
-	public ResponseEntity<List<ChefBookingMultipleDays>> getAllbookings() {
-		List<ChefBookingMultipleDays> bookings = chefbookingMultipleDaysService.getAllBookings();
+	public ResponseEntity<List<CookBookingMultipleDays>> getAllbookings() {
+		List<CookBookingMultipleDays> bookings = cookbookingMultipleDaysService.getAllBookings();
 		return ResponseEntity.ok(bookings);
 	}
 
 	@PreAuthorize("hasRole('CUSTOMER')")
-	@DeleteMapping("/delete")
-	public ResponseEntity<?> deleteBooking(@RequestParam String chefDayId) {
-		chefbookingMultipleDaysService.deleteById(chefDayId);
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> deleteBooking(@RequestParam String cookDayId) {
+		cookbookingMultipleDaysService.deleteBooking(cookDayId);
 		return ResponseEntity.ok("Booking deleted successfully.");
 	}
 
 	@PreAuthorize("hasRole('CUSTOMER')")
-	@PutMapping("/update")
-	public ResponseEntity<?> updateBooking(@RequestBody ChefBookingMultipleDays chefBooking, @RequestParam String chefDayId) {
-		chefbookingMultipleDaysService.updateChefBooking(chefBooking, chefDayId);
-		return ResponseEntity.ok("Booking Updated successfully.");
+	@DeleteMapping("/update")
+	public ResponseEntity<?> updateBooking(@RequestBody CookBookingMultipleDays cookBookingMultipleDays,
+			@RequestParam String cookDayId) {
+		cookbookingMultipleDaysService.updateCookBooking(cookBookingMultipleDays, cookDayId);
+		return ResponseEntity.ok("Booking deleted successfully.");
 	}
 
 }

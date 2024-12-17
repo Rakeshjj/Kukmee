@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.kukmee.payment.service.StripeServiceCatering;
 import com.kukmee.payment.service.StripeServiceChef;
-import com.kukmee.payment.service.StripeServiceCook;
 import com.kukmee.payment.service.StripeServiceOrder;
 
 @RestController
@@ -26,9 +25,6 @@ public class PaymentController {
 	@Autowired
 	private StripeServiceChef stripeServiceChef;
 
-	@Autowired
-	private StripeServiceCook stripeServiceCook;
-
 	@PostMapping("/order")
 	public ResponseEntity<StripeResponse> checkoutOrder(@RequestParam Long orderid) {
 		StripeResponse response = stripeServiceOrder.checkOutOrder(orderid);
@@ -40,13 +36,13 @@ public class PaymentController {
 		StripeResponse stripeResponse = stripeServiceChef.checkOutChefBooking(chefBookingId);
 		return ResponseEntity.ok(stripeResponse);
 	}
-	
+
 	@PostMapping("/chefMul")
 	public ResponseEntity<StripeResponse> checkoutBookingCreationMultiple(@RequestParam String chefDayId) {
 		StripeResponse stripeResponse = stripeServiceChef.checkOutChefBookingMultiple(chefDayId);
 		return ResponseEntity.ok(stripeResponse);
 	}
-	
+
 	@PostMapping("/chefMonthly")
 	public ResponseEntity<StripeResponse> checkoutBookingCreationMonthly(@RequestParam String id) {
 		StripeResponse stripeResponse = stripeServiceChef.checkOutChefBookingMonthly(id);
@@ -57,30 +53,6 @@ public class PaymentController {
 	public ResponseEntity<StripeResponse> checkoutCateringBooking(@RequestParam Long cateringId) {
 		StripeResponse stripeResponse = stripeServiceCatering.checkOutCateringBooking(cateringId);
 		return ResponseEntity.ok(stripeResponse);
-	}
-	
-	@PostMapping("/cook")
-	public ResponseEntity<StripeResponse> checkoutCook(@RequestParam Long cookId) {
-		StripeResponse response = stripeServiceCook.checkOutCookBooking(cookId);
-		return ResponseEntity.ok(response);
-	}
-	
-	@PostMapping("/monthlycook")
-	public ResponseEntity<StripeResponse> checkoutMonthlyCook(@RequestParam Long monthlyCookId) {
-		StripeResponse response = stripeServiceCook.checkOutMonthlyCookBooking(monthlyCookId);
-		return ResponseEntity.ok(response);
-	}
-	
-	@GetMapping("/cooksuccess")
-	public ResponseEntity<String> handlePaymentSuccessCook(@RequestParam("session_id") String sessionId) {
-		String response = stripeServiceCook.handlePaymentSuccess(sessionId);
-		return ResponseEntity.ok(response);
-	}
-
-	@GetMapping("/cookcancel")
-	public ResponseEntity<String> handlePaymentCancelCook(@RequestParam String sessionId) {
-		String response = stripeServiceCook.handlePaymentFailure(sessionId);
-		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/success")

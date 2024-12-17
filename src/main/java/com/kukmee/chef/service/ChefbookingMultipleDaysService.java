@@ -1,10 +1,15 @@
 package com.kukmee.chef.service;
 
+import java.util.List;
+import java.util.Objects;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.kukmee.chef.ChefBooking;
 import com.kukmee.chef.ChefBookingMultipleDays;
 import com.kukmee.chef.repo.ChefBookingMultipleDaysRepo;
+import com.kukmee.exception.ResourceNotFoundException;
 
 @Service
 public class ChefbookingMultipleDaysService {
@@ -70,6 +75,93 @@ public class ChefbookingMultipleDaysService {
 		chefBooking.setBalanceAmount(balance);
 
 		return chefBookingMultipleDaysRepo.save(chefBooking);
+	}
+
+	public List<ChefBookingMultipleDays> getAllBookings() {
+		return chefBookingMultipleDaysRepo.findAll();
+	}
+
+	public ChefBookingMultipleDays getById(String chefDayId) {
+		return chefBookingMultipleDaysRepo.findById(chefDayId)
+				.orElseThrow(() -> new ResourceNotFoundException("ID Not Found:" + chefDayId));
+	}
+
+	public void deleteById(String chefDayId) {
+		if (!chefBookingMultipleDaysRepo.existsById(chefDayId)) {
+			throw new ResourceNotFoundException("ID Not Found:" + chefDayId);
+		}
+		chefBookingMultipleDaysRepo.deleteById(chefDayId);
+	}
+
+	public ChefBookingMultipleDays updateChefBooking(ChefBookingMultipleDays chefBooking, String chefDayId) {
+		ChefBookingMultipleDays chefBookingUpdate = chefBookingMultipleDaysRepo.findById(chefDayId)
+				.orElseThrow(() -> new ResourceNotFoundException("ID NOT FOUND:" + chefDayId));
+
+		if (Objects.nonNull(chefBooking.getOccasion()) && !"".equals(chefBooking.getOccasion())) {
+			chefBookingUpdate.setOccasion(chefBooking.getOccasion());
+		}
+
+		if (Objects.nonNull(chefBooking.getDate()) && !"".equals(chefBooking.getDate())) {
+			chefBookingUpdate.setDate(chefBooking.getDate());
+		}
+
+		if (Objects.nonNull(chefBooking.getMealType()) && !"".equals(chefBooking.getMealType())) {
+			chefBookingUpdate.setMealType(chefBooking.getMealType());
+		}
+
+		if (Objects.nonNull(chefBooking.getTimeSlot()) && !"".equals(chefBooking.getTimeSlot())) {
+			chefBookingUpdate.setTimeSlot(chefBooking.getTimeSlot());
+		}
+
+		if (chefBooking.getNumberOfPeople() > 0) {
+			chefBookingUpdate.setNumberOfPeople(chefBooking.getNumberOfPeople());
+		}
+
+		if (chefBooking.getGasBurners() > 0) {
+			chefBookingUpdate.setGasBurners(chefBooking.getGasBurners());
+		}
+
+		if (Objects.nonNull(chefBooking.getLocation()) && !"".equals(chefBooking.getLocation())) {
+			chefBookingUpdate.setLocation(chefBooking.getLocation());
+		}
+
+		if (chefBooking.getDishes() != null && !chefBooking.getDishes().isEmpty()) {
+			chefBookingUpdate.setDishes(chefBooking.getDishes());
+		}
+
+		if (Objects.nonNull(chefBooking.getCuisine()) && !"".equals(chefBooking.getCuisine())) {
+			chefBookingUpdate.setCuisine(chefBooking.getCuisine());
+		}
+
+		if (chefBooking.getBasePrice() >= 0) {
+			chefBookingUpdate.setBasePrice(chefBooking.getBasePrice());
+		}
+
+		if (chefBooking.getDishCharges() >= 0) {
+			chefBookingUpdate.setDishCharges(chefBooking.getDishCharges());
+		}
+
+		if (chefBooking.getDiscount() >= 0) {
+			chefBookingUpdate.setDiscount(chefBooking.getDiscount());
+		}
+
+		if (chefBooking.getGst() >= 0) {
+			chefBookingUpdate.setGst(chefBooking.getGst());
+		}
+
+		if (chefBooking.getTotalAmount() >= 0) {
+			chefBookingUpdate.setTotalAmount(chefBooking.getTotalAmount());
+		}
+
+		if (chefBooking.getAdvancePayment() >= 0) {
+			chefBookingUpdate.setAdvancePayment(chefBooking.getAdvancePayment());
+		}
+
+		if (chefBooking.getBalanceAmount() >= 0) {
+			chefBookingUpdate.setBalanceAmount(chefBooking.getBalanceAmount());
+		}
+
+		return chefBookingMultipleDaysRepo.save(chefBookingUpdate);
 	}
 
 	private String generateCustomId() {
