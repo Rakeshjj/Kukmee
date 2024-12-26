@@ -43,19 +43,19 @@ public class CookController {
 	}
 
 	// Get cook by ID
-	@GetMapping("/{cookid}")
+	@GetMapping("/cook/{cookid}")
 	public ResponseEntity<?> getCookById(@PathVariable Long cookid) {
 		return cookService.getCookById(cookid);
 	}
 
 	// Update cook information
-	@PutMapping("/{cookid}")
+	@PutMapping("/cook/{cookid}")
 	public ResponseEntity<?> updateCook(@PathVariable Long cookid, @Valid @RequestBody CookSignup cookSignup) {
 		return cookService.updateCook(cookid, cookSignup);
 	}
 
 	// Delete cook
-	@DeleteMapping("/{cookid}")
+	@DeleteMapping("/cook/{cookid}")
 	public ResponseEntity<?> deleteCook(@PathVariable Long cookid) {
 		return cookService.deleteCook(cookid);
 	}

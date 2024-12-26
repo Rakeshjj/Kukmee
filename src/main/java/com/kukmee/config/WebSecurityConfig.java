@@ -90,6 +90,7 @@ public class WebSecurityConfig {
 						.requestMatchers("/payment/v1/chefsuccess", "/payment/v1/chefcancel").permitAll()
 						.requestMatchers("/payment/v1/cateringsuccess", "/payment/v1/cateringcancel").permitAll()
 						.requestMatchers("/payment/v1/cooksuccess", "/payment/v1/cookcancel").permitAll()
+				        .requestMatchers("/api/auth/reset-password").permitAll()
 						.requestMatchers("/payment/v1/monthlycooksuccess", "/payment/v1/monthlycookcancel").permitAll()
 						.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs.yaml")
 						.permitAll() // Allow Swagger UI
@@ -106,10 +107,11 @@ public class WebSecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("http://127.0.0.1:5500"));
-		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-		configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+		configuration.addAllowedOriginPattern("*"); // Allow all origins
+		configuration.addAllowedMethod("*"); // Allow all HTTP methods
+		configuration.addAllowedHeader("*"); // Allow all headers
 		configuration.setAllowCredentials(true);
+		configuration.addExposedHeader("Authorization"); // Expose Authorization header
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
 		return source;

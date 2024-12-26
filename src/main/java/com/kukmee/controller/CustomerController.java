@@ -2,17 +2,22 @@ package com.kukmee.controller;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.kukmee.entity.Customer;
 import com.kukmee.entity.ERole;
 import com.kukmee.entity.Role;
+import com.kukmee.exception.ResourceNotFoundException;
 import com.kukmee.repository.CustomerRepository;
 import com.kukmee.repository.RoleRepository;
 import com.kukmee.request.CustomerSignUp;
@@ -133,5 +139,41 @@ public class CustomerController {
 			};
 		}).collect(Collectors.toList());
 		return ResponseEntity.ok(userDetails);
+	}
+
+	@PreAuthorize("hasRole('CUSTOMER')")
+	@GetMapping("/get/{customerid}")
+	public Customer getById(@PathVariable Long customerid) {
+		return customerRepository.findById(customerid)
+				.orElseThrow(() -> new ResourceNotFoundException("ID NOT FOUND :" + customerid));
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/me")
+	public ResponseEntity<?> getLoggedInUser(Authentication authentication) {
+		
+		if (authentication == null || !authentication.isAuthenticated()) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
+		}
+
+		String username = authentication.getName();
+		Optional<Customer> customer = customerRepository.findByUsername(username);
+
+		if (customer.isPresent()) {
+			return ResponseEntity.ok(customer.get());
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User details not found");
+		}
+		
+		
+	}
+
+	@PreAuthorize("hasRole('CUSTOMER')")
+	@DeleteMapping("/delete/{customerid}")
+	public void deleteById(@PathVariable Long customerid) {
+		if (!customerRepository.existsById(customerid)) {
+			throw new ResourceNotFoundException("ID NOT FOUND :" + customerid);
+		}
+		customerRepository.deleteById(customerid);
 	}
 }

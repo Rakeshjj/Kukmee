@@ -23,43 +23,37 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/auth")
 public class BartenderController {
 
-    @Autowired
-    private BartenderService bartenderService;
+	@Autowired
+	private BartenderService bartenderService;
 
-    // Register a new Chef
-    @PostMapping("/bartendersignup")
-    public ResponseEntity<?> registerBartender(@Valid @RequestBody BartenderSignup bartender) { 	
-        return bartenderService.registerBartender(bartender);  
-    }
+	@PostMapping("/bartendersignup")
+	public ResponseEntity<?> registerBartender(@Valid @RequestBody BartenderSignup bartender) {
+		return bartenderService.registerBartender(bartender);
+	}
 
+	@PostMapping("/bartendersignin")
+	public ResponseEntity<?> authenticateBartender(@Valid @RequestBody LoginRequest loginRequest) {
+		return bartenderService.authenticateBartender(loginRequest);
+	}
 
-    // Authenticate Chef (Login)
-    @PostMapping("/bartendersignin")
-    public ResponseEntity<?> authenticateBartender(@Valid @RequestBody LoginRequest loginRequest) {
-        return bartenderService.authenticateBartender(loginRequest);
-    }
+	@GetMapping("/bartenderall")
+	public ResponseEntity<?> getAllBartenders() {
+		return bartenderService.getAllBartenders();
+	}
 
-    // Get All Chefs
-    @GetMapping("/bartenderall")
-    public ResponseEntity<?> getAllBartenders() {
-        return bartenderService.getAllBartenders();
-    }
+	@GetMapping("/{bartenderid}")
+	public ResponseEntity<?> getBartenderById(@PathVariable Long bartenderid) {
+		return bartenderService.getBartenderById(bartenderid);
+	}
 
-    // Get Chef by ID
-    @GetMapping("/{bartenderid}")
-    public ResponseEntity<?> getBartenderById(@PathVariable Long bartenderid) {
-        return bartenderService.getBartenderById(bartenderid);
-    }
+	@PutMapping("/bartender/{bartenderid}")
+	public ResponseEntity<?> updateBartender(@PathVariable Long bartenderid,
+			@Valid @RequestBody BartenderSignup bartenderSignup) {
+		return bartenderService.updateBartender(bartenderid, bartenderSignup);
+	}
 
-    // Update Chef Information
-    @PutMapping("/{bartenderid}")
-    public ResponseEntity<?> updateBartender(@PathVariable Long bartenderid, @Valid @RequestBody BartenderSignup bartenderSignup) {
-        return bartenderService.updateBartender(bartenderid, bartenderSignup);
-    }
-
-    // Delete Chef by ID
-    @DeleteMapping("/{bartenderid}")
-    public ResponseEntity<?> deleteBartender(@PathVariable Long bartenderid) {
-        return bartenderService.deleteBartender(bartenderid);
-    }
+	@DeleteMapping("/{bartenderid}")
+	public ResponseEntity<?> deleteBartender(@PathVariable Long bartenderid) {
+		return bartenderService.deleteBartender(bartenderid);
+	}
 }

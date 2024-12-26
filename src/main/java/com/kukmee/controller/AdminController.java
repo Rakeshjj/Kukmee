@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -52,6 +53,12 @@ public class AdminController {
 
 	@Autowired
 	PasswordEncoder encoder;
+
+	@PreAuthorize("hasRole('CUSTOMER')")
+	@GetMapping("/get")
+	public String get() {
+		return "Hello world";
+	}
 
 	@PostMapping("/adminsignup")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody AdminSignUp signUpResquest) {

@@ -64,6 +64,12 @@ public class Customer {
 			@JoinColumn(name = "role_id") })
 	private Set<Role> roles = new HashSet<>();
 
+	@Column(nullable = true)
+	private String resetToken;
+
+	@Column(nullable = true)
+	private LocalDateTime resetTokenExpirationTime;
+
 	@CreationTimestamp
 	private LocalDateTime createdAt;
 

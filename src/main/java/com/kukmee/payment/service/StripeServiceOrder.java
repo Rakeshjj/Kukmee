@@ -1,11 +1,14 @@
 package com.kukmee.payment.service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.kukmee.orders.Order;
-import com.kukmee.orders.OrderRepository;
+import com.kukmee.foodorders.Order;
+import com.kukmee.foodorders.OrderRepository;
 import com.kukmee.payment.OrderPayment;
 import com.kukmee.payment.StripeResponse;
 import com.kukmee.payment.repo.OrderPaymentRepository;
@@ -31,8 +34,9 @@ public class StripeServiceOrder {
 		Order order = orderRepository.findById(orderid)
 				.orElseThrow(() -> new RuntimeException("Order not found with ID: " + orderid));
 
-		// Calculate amount (if not already calculated)
-		Long totalAmountInCents = (long) (order.getTotalamount() * 100); // Stripe expects cents
+		BigDecimal totalAmount = order.getTotalamount();
+		BigDecimal totalAmountInCents = totalAmount.multiply(BigDecimal.valueOf(100)).setScale(0, RoundingMode.HALF_UP);
+
 
 		Stripe.apiKey = secretKey;
 
@@ -41,7 +45,7 @@ public class StripeServiceOrder {
 				.builder().setName("Order # " + order.getTotalamount()).build();
 
 		SessionCreateParams.LineItem.PriceData priceData = SessionCreateParams.LineItem.PriceData.builder()
-				.setCurrency(order.getTotalamount() != null ? "USD" : "INR").setUnitAmount(totalAmountInCents)
+				.setCurrency(order.getTotalamount() != null ? "USD" : "INR").setUnitAmountDecimal(totalAmountInCents)
 				.setProductData(productData).build();
 
 		SessionCreateParams.LineItem lineItem = SessionCreateParams.LineItem.builder().setQuantity(1L)

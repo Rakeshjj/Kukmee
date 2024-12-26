@@ -43,12 +43,17 @@ public class JwtUtils {
 
 	}
 
-	public Key key() {
+	private Key key() {
+		if (jwtSecret == null || jwtSecret.isEmpty()) {
+			throw new IllegalStateException("JWT secret is not configured.");
+		}
 		return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
 	}
 
 	public boolean validateJwtToken(String authToken) {
 		try {
+			logger.debug("Validating JWT Token: {}", authToken);
+
 			Jwts.parserBuilder().setSigningKey(key()).build().parse(authToken);
 			logger.info("JWT token validate successfully");
 			return true;
@@ -60,6 +65,8 @@ public class JwtUtils {
 			logger.error("JWT Token is unsupported : {}", e.getMessage());
 		} catch (IllegalArgumentException e) {
 			logger.error("JWT claims string is empty : {}", e.getMessage());
+		} catch (Exception e) {
+			logger.error("Unexpected error during JWT validation: {}", e.getMessage());
 		}
 		return false;
 
