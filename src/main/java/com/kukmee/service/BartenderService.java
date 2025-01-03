@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import com.kukmee.entity.Bartender;
 import com.kukmee.entity.ERole;
 import com.kukmee.entity.Role;
-import com.kukmee.exception.ResourceNotFoundException;
 import com.kukmee.repository.BartenderRepository;
 import com.kukmee.repository.RoleRepository;
 import com.kukmee.request.BartenderSignup;

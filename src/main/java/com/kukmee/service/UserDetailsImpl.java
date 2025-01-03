@@ -31,7 +31,6 @@ public class UserDetailsImpl implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    // Build from Admin
     public static UserDetailsImpl build(Admin admin) {
         List<GrantedAuthority> authorities = admin.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName().name()))
@@ -39,7 +38,6 @@ public class UserDetailsImpl implements UserDetails {
         return new UserDetailsImpl(admin.getId(), admin.getUsername(), admin.getPassword(), authorities);
     }
 
-    // Build from Customer
     public static UserDetailsImpl build(Customer customer) {
         List<GrantedAuthority> authorities = customer.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName().name()))
@@ -47,7 +45,6 @@ public class UserDetailsImpl implements UserDetails {
         return new UserDetailsImpl(customer.getCustomerid(), customer.getUsername(), customer.getPassword(), authorities);
     }
 
-    // Build from SubAdmin
     public static UserDetailsImpl build(SubAdmin subAdmin) {
         List<GrantedAuthority> authorities = subAdmin.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName().name()))

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import com.kukmee.cook.CookBooking;
 import com.kukmee.cook.repo.CookBookingRepo;
-import com.kukmee.payment.CateringBookingPayment;
 import com.kukmee.payment.CookBookingPayment;
 import com.kukmee.payment.StripeResponse;
 import com.kukmee.payment.repo.CookBookingPaymentRepo;

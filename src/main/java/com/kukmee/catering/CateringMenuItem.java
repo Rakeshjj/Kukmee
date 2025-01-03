@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Embeddable // Mark this as an embeddable type
-public class CateringMenuItem { // Use a unique name
+public class CateringMenuItem { 
 
 	private String category;
 	private String name;

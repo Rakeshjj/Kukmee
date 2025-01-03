@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.kukmee.chef.ChefBookingMultipleDays;
 import com.kukmee.chef.ChefMonthlyBooking;
 import com.kukmee.chef.service.ChefMonthlyBookingService;
 import com.kukmee.payment.PaymentController;

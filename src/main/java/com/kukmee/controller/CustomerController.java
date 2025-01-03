@@ -163,9 +163,7 @@ public class CustomerController {
 			return ResponseEntity.ok(customer.get());
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User details not found");
-		}
-		
-		
+		}	
 	}
 
 	@PreAuthorize("hasRole('CUSTOMER')")

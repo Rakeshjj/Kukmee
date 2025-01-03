@@ -6,7 +6,6 @@ import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.kukmee.chef.ChefBooking;
 import com.kukmee.chef.ChefBookingMultipleDays;
 import com.kukmee.chef.repo.ChefBookingMultipleDaysRepo;
 import com.kukmee.exception.ResourceNotFoundException;
