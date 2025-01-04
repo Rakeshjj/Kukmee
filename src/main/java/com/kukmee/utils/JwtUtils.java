@@ -35,12 +35,10 @@ public class JwtUtils {
 		return Jwts.builder().setSubject((userPrincipal.getUsername())).setIssuedAt(new Date())
 				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
 				.signWith(key(), SignatureAlgorithm.HS256).compact();
-
 	}
 
 	public String getUserNameFromJwtToken(String token) {
 		return Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(token).getBody().getSubject();
-
 	}
 
 	private Key key() {
@@ -69,7 +67,6 @@ public class JwtUtils {
 			logger.error("Unexpected error during JWT validation: {}", e.getMessage());
 		}
 		return false;
-
 	}
 
 }

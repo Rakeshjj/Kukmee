@@ -27,7 +27,7 @@ public class InventoryItem {
 	private double pricePerUnit;
 
 	@Column(nullable = false)
-	private int minimumStockLevel; // For low-stock alerts
+	private int minimumStockLevel; 
 
 	// Getters and Setters
 }

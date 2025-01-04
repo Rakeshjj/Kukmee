@@ -1,13 +1,11 @@
 package com.kukmee.kukmart;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.kukmee.exception.ResourceNotFoundException;
-import com.kukmee.inventory.InventoryService;
 
 @Service
 public class KukmartOrderService {
@@ -15,17 +13,30 @@ public class KukmartOrderService {
 	@Autowired
 	private KukmartOrderRepository orderRepository;
 
-	@Autowired
-	private InventoryService inventoryService;
+//	@Autowired
+//	private InventoryService inventoryService;
 
 	public KukmartOrder createOrder(KukmartOrder order) {
+//
+//		for (KukmartOrderItem item : order.getItems()) {
+//			inventoryService.deductStock(item.getItemName(), item.getQuantity());
+//		}
 
-		for (KukmartOrderItem item : order.getItems()) {
-			inventoryService.deductStock(item.getItemName(), item.getQuantity());
-		}
-		order.setStatus("Pending");
+		double subtotal = order.getTotalAmount();
+
+		double gst = subtotal * 0.18;
+
+		double totalAmount = gst + subtotal;
+
+		order.setStatus("CONFIRMED");
+		order.setGst(gst);
+		order.setTotalAmount(totalAmount);
 		return orderRepository.save(order);
 	}
+
+//	public Page<KukmartOrder> getOrderByCustomer(String username, Pageable pageable) {
+//		return orderRepository.findByCustomerUsernamePage(username, pageable);
+//	}
 
 	public List<KukmartOrder> getOrdersByCustomer(String username) {
 		return orderRepository.findByCustomerUsername(username);
@@ -39,6 +50,16 @@ public class KukmartOrderService {
 		KukmartOrder order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
 		order.setStatus(status);
 		return orderRepository.save(order);
+	}
+
+	public KukmartOrder cancelOrder(Long id) {
+		KukmartOrder order = getOrderById(id);
+		if (!"CONFIRMED".equalsIgnoreCase(order.getStatus())) {
+			throw new IllegalArgumentException("Only confiirmed orders can be canceled.");
+		}
+		order.setStatus("CANCELED");
+		return orderRepository.save(order);
+
 	}
 
 	public List<KukmartOrder> getAll() {
