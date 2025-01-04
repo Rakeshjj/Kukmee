@@ -1,7 +1,9 @@
 package com.kukmee.subscription;
 
+import java.time.LocalDateTime;
 import java.util.Set;
-
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -39,4 +41,10 @@ public class Plan {
 	@CollectionTable(name = "plan_food_items", joinColumns = @JoinColumn(name = "plan_id"))
 	@Column(name = "food_item")
 	private Set<String> foodItems;
+
+	@CreationTimestamp
+	private LocalDateTime createdAt;
+
+	@UpdateTimestamp
+	private LocalDateTime updatedAt;
 }

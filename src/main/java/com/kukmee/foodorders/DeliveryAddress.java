@@ -1,5 +1,6 @@
 package com.kukmee.foodorders;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,15 +14,25 @@ import lombok.Setter;
 @Embeddable
 public class DeliveryAddress {
 
-    private String street;
-    private String city;
-    private String state;
-    private String zipCode;
+	@Column(nullable = false)
+	private String contactPerson;
+	
+	@Column(nullable = false)
+	private Long phoneNumber;
+	
+	@Column(nullable = false)
+	private String street;
+	
+	@Column(nullable = false)
+	private String landMark;
+	
+	@Column(nullable = false)
+	private String city;
+
 	@Override
 	public String toString() {
-		return "DeliveryAddress [street=" + street + ", city=" + city + ", state=" + state + ", zipCode=" + zipCode
-				+ "]";
+		return "DeliveryAddress [contactPerson=" + contactPerson + ", phoneNumber=" + phoneNumber + ", street=" + street
+				+ ", landMark=" + landMark + ", city=" + city + "]";
 	}
-    
-    
+
 }

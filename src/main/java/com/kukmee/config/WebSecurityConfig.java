@@ -82,21 +82,20 @@ public class WebSecurityConfig {
 		http.csrf(csrf -> csrf.disable())
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.cors(cors -> cors.configurationSource(corsConfigurationSource())) // Explicit CORS configuration
+				.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 				.authorizeHttpRequests(auth -> auth.requestMatchers("/favicon.ico").permitAll()
-						.requestMatchers("/api/auth/**").permitAll() // Allow authentication endpoints
-						.requestMatchers("/api/franchise/inquiry").permitAll() // Allow franchise inquiry without
+						.requestMatchers("/api/auth/**").permitAll().requestMatchers("/api/auth/me").authenticated()
+						.requestMatchers("/api/franchise/inquiry").permitAll()
 						.requestMatchers("/payment/v1/success", "/payment/v1/cancel").permitAll()
 						.requestMatchers("/payment/v1/chefsuccess", "/payment/v1/chefcancel").permitAll()
 						.requestMatchers("/payment/v1/cateringsuccess", "/payment/v1/cateringcancel").permitAll()
 						.requestMatchers("/payment/v1/cooksuccess", "/payment/v1/cookcancel").permitAll()
-				        .requestMatchers("/api/auth/reset-password").permitAll()
+						.requestMatchers("/api/auth/reset-password").permitAll()
 						.requestMatchers("/payment/v1/monthlycooksuccess", "/payment/v1/monthlycookcancel").permitAll()
 						.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs.yaml")
-						.permitAll() // Allow Swagger UI
-						.requestMatchers("/api/fooditems/save").hasRole("ADMIN") // Only Admin can save food items
+						.permitAll().requestMatchers("/api/fooditems/save").hasRole("ADMIN")
 						.requestMatchers("/api/bartender/book").authenticated().requestMatchers("/favicon.ico")
-						.permitAll().anyRequest().authenticated()); // All other requests require authentication
+						.permitAll().anyRequest().authenticated());
 
 		http.authenticationProvider(authenticationProvider());
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -107,11 +106,11 @@ public class WebSecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.addAllowedOriginPattern("*"); // Allow all origins
-		configuration.addAllowedMethod("*"); // Allow all HTTP methods
-		configuration.addAllowedHeader("*"); // Allow all headers
+		configuration.addAllowedOriginPattern("*");
+		configuration.addAllowedMethod("*");
+		configuration.addAllowedHeader("*");
 		configuration.setAllowCredentials(true);
-		configuration.addExposedHeader("Authorization"); // Expose Authorization header
+		configuration.addExposedHeader("Authorization");
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
 		return source;

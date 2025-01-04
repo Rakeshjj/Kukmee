@@ -1,6 +1,10 @@
 package com.kukmee.subscription;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -40,4 +44,10 @@ public class Subscription {
 
 	@Column(nullable = false)
 	private Boolean isActive = true;
+	
+	@CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 }
