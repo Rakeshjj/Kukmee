@@ -36,7 +36,6 @@ public class ForgotPasswordController {
 	@Autowired
 	private CustomerRepository customerRepository;
 
-	// Endpoint to generate and send the reset token
 	@PostMapping("/forgot-password")
 	public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
 		Customer customer = customerRepository.findByEmail(request.getEmail());
@@ -51,34 +50,32 @@ public class ForgotPasswordController {
 		return ResponseEntity.ok("Password reset token has been sent to your email.");
 	}
 
-	// Endpoint to validate the token
 	@GetMapping("/reset-password")
 	public ResponseEntity<?> resetPasswordTokenHandler(@RequestParam String token) throws JsonProcessingException {
-	    try {
-	        System.out.println("Received token: " + token);
+		try {
+			System.out.println("Received token: " + token);
 
-	        Customer customer = customerRepository.findByResetToken(token);
-	        if (customer == null) {
-	            // Token not found
-	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ObjectMapper().writeValueAsString("Invalid token."));
-	        }
+			Customer customer = customerRepository.findByResetToken(token);
+			if (customer == null) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+						.body(new ObjectMapper().writeValueAsString("Invalid token."));
+			}
 
-	        if (customer.getResetTokenExpirationTime().isBefore(LocalDateTime.now())) {
-	            // Token has expired
-	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ObjectMapper().writeValueAsString("Token has expired."));
-	        }
+			if (customer.getResetTokenExpirationTime().isBefore(LocalDateTime.now())) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+						.body(new ObjectMapper().writeValueAsString("Token has expired."));
+			}
 
-	        // Token is valid
-	        return ResponseEntity.ok(new ObjectMapper().writeValueAsString("Token is valid. You may proceed to reset your password."));
+			return ResponseEntity.ok(
+					new ObjectMapper().writeValueAsString("Token is valid. You may proceed to reset your password."));
 
-	    } catch (Exception ex) {
-	        ex.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ObjectMapper().writeValueAsString("An unexpected error occurred."));
-	    }
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new ObjectMapper().writeValueAsString("An unexpected error occurred."));
+		}
 	}
 
-
-	// Endpoint to reset the password using the token
 	@PostMapping("/reset-password")
 	public ResponseEntity<?> resetPassword(@RequestParam String token, @RequestBody ResetPasswordRequest request) {
 		Customer customer = customerRepository.findByResetToken(token);
