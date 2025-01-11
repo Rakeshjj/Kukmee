@@ -12,6 +12,7 @@ import com.kukmee.payment.service.StripeServiceCatering;
 import com.kukmee.payment.service.StripeServiceChef;
 import com.kukmee.payment.service.StripeServiceCook;
 import com.kukmee.payment.service.StripeServiceOrder;
+import com.kukmee.payment.service.SubscriptionPaymentService;
 
 @RestController
 @RequestMapping("/payment/v1")
@@ -28,6 +29,9 @@ public class PaymentController {
 
 	@Autowired
 	private StripeServiceCook stripeServiceCook;
+
+	@Autowired
+	private SubscriptionPaymentService subscriptionPaymentService;
 
 	@PostMapping("/order")
 	public ResponseEntity<StripeResponse> checkoutOrder(@RequestParam Long orderid) {
@@ -100,7 +104,7 @@ public class PaymentController {
 		String response = stripeServiceCatering.handlePaymentFailure(sessionId);
 		return ResponseEntity.ok(response);
 	}
-	
+
 	@GetMapping("/cooksuccess")
 	public ResponseEntity<String> handlePaymentSuccessCook(@RequestParam("session_id") String sessionId) {
 		String response = stripeServiceCook.handlePaymentSuccess(sessionId);
@@ -110,6 +114,24 @@ public class PaymentController {
 	@GetMapping("/cookcancel")
 	public ResponseEntity<String> handlePaymentCancelCook(@RequestParam String sessionId) {
 		String response = stripeServiceCook.handlePaymentFailure(sessionId);
+		return ResponseEntity.ok(response);
+	}
+
+	@PostMapping("/subscription")
+	public ResponseEntity<StripeResponse> subscriptionPlan(@RequestParam Long id) {
+		StripeResponse response = subscriptionPaymentService.subscriptionPlan(id);
+		return ResponseEntity.ok(response);
+	}
+	
+	@GetMapping("/subscriptionsuccess")
+	public ResponseEntity<String> handlePaymentSuccessSubscription(@RequestParam("session_id") String sessionId) {
+		String response = subscriptionPaymentService.handlePaymentSuccess(sessionId);
+		return ResponseEntity.ok(response);
+	}
+
+	@GetMapping("/subscriptioncancel")
+	public ResponseEntity<String> handlePaymentCancelSubscription(@RequestParam String sessionId) {
+		String response = subscriptionPaymentService.handlePaymentFailure(sessionId);
 		return ResponseEntity.ok(response);
 	}
 }

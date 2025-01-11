@@ -52,6 +52,7 @@ public class OrderController {
 		return ResponseEntity.ok(order);
 	}
 
+	@PreAuthorize("hasRole('CUSTOMER')")
 	@GetMapping("/getAll")
 	public ResponseEntity<?> getAll() {
 		List<Order> orders = orderService.getAllOrders();

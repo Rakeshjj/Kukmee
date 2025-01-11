@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.kukmee.entity.Customer;
 
 import jakarta.persistence.Column;
@@ -34,6 +36,7 @@ public class Order {
     private Long orderId;
 
     @OneToMany(mappedBy = "order", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<FoodItem> foodItems; 
 
     private BigDecimal totalamount;

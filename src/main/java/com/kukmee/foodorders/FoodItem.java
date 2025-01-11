@@ -2,6 +2,8 @@ package com.kukmee.foodorders;
 
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,5 +32,6 @@ public class FoodItem {
     private BigDecimal foodprice;
 
     @ManyToOne
+    @JsonIgnore
     private Order order; // Many food items belong to one order
 }
