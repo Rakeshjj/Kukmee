@@ -1,5 +1,6 @@
 package com.kukmee.cateringbooking;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -33,16 +34,20 @@ public class EventBooking {
 
 	@NotNull(message = "Phone number is required")
 	private Long phoneNumber;
-	
+
 	@NotNull(message = "Package cannot be null")
+	@Pattern(regexp = "^(Basic|Premium|Deluxe|Custom)$", message = "Package name must be one of: Basic, Premium, Deluxe")
 	private String packageName;
-	
+
 	@NotNull(message = "EventType cannot be null")
 	private String eventType;
-	
+
+	@Column(nullable = true)
+	private Double packagePrice;
+
 	@NotNull(message = "EventDate cannot be null")
 	private String eventDate;
-	
+
 	@NotNull(message = "EventLocation cannot be null")
 	private String eventLocation;
 

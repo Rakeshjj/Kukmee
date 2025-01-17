@@ -1,6 +1,6 @@
 package com.kukmee.payment;
 
-import com.kukmee.subscription.SubscriptionPlan;
+import com.kukmee.cateringbooking.EventBooking;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,8 +19,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class SubscriptionPayment {
-  
+public class EventBookingPayment {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -33,6 +33,6 @@ public class SubscriptionPayment {
 	private String status;
 
 	@ManyToOne
-	@JoinColumn(name = "subscription_id", nullable = false)
-	private SubscriptionPlan subscriptionPlan;
+	@JoinColumn(name = "event_booking_id", nullable = false)
+	private EventBooking eventBooking;
 }

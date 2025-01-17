@@ -89,6 +89,7 @@ public class WebSecurityConfig {
 						.requestMatchers("/payment/v1/success", "/payment/v1/cancel").permitAll()
 						.requestMatchers("/payment/v1/subscriptionsuccess", "/payment/v1/subscriptioncancel").permitAll()
 						.requestMatchers("/payment/v1/chefsuccess", "/payment/v1/chefcancel").permitAll()
+						.requestMatchers("/payment/v1/kukmartsuccess", "/payment/v1/kukmartcancel").permitAll()
 						.requestMatchers("/payment/v1/cateringsuccess", "/payment/v1/cateringcancel").permitAll()
 						.requestMatchers("/payment/v1/cooksuccess", "/payment/v1/cookcancel").permitAll()
 						.requestMatchers("/api/auth/reset-password").permitAll()

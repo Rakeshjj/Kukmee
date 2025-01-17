@@ -42,7 +42,7 @@ public class StripeServiceOrder {
 
 		// Create the Stripe session for checkout
 		SessionCreateParams.LineItem.PriceData.ProductData productData = SessionCreateParams.LineItem.PriceData.ProductData
-				.builder().setName("Order # " + order.getTotalamount()).build();
+				.builder().setName("Order").build();
 
 		SessionCreateParams.LineItem.PriceData priceData = SessionCreateParams.LineItem.PriceData.builder()
 				.setCurrency(order.getTotalamount() != null ? "USD" : "INR").setUnitAmountDecimal(totalAmountInCents)

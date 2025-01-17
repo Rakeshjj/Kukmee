@@ -31,27 +31,22 @@ public class SubscriptionPlan {
 	private Long id;
 
 	@NotNull(message = "PlanType cannot be null")
-	private String planType; // "vrad", "dietary", or "catering"
-
-	private String description; // Brief description of the subscription
-
+	private String planType; 
+	private String description; 
 	@NotNull(message = "Cost cannot be null")
 	private Double cost;
 
 	@NotNull(message = "Duration cannot be null")
-	private Integer duration; // Duration in days (e.g., 7, 14, 30)
-
+	private Integer duration; 
 	@ElementCollection
-	private List<String> mealPreferences; // Meals included, e.g., "Fasting Meals", "Dietary Meals"
-
+	private List<String> mealPreferences; 
 	@Column(nullable = false)
-	private String availability; // "Daily", "Weekly", or "Custom"
-
+	private String availability; 
 	@Column(nullable = false)
 	private LocalDate startDate;
 
 	private boolean isExpired = false;
 	@ManyToOne
-	@JoinColumn(name = "customer_id") // foreign key column
+	@JoinColumn(name = "customer_id") 
 	private Customer customer;
 }

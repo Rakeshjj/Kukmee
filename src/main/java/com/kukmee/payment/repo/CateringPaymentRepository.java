@@ -2,9 +2,9 @@ package com.kukmee.payment.repo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.kukmee.payment.CateringBookingPayment;
+import com.kukmee.payment.EventBookingPayment;
 
-public interface CateringPaymentRepository extends JpaRepository<CateringBookingPayment, Long>{
+public interface CateringPaymentRepository extends JpaRepository<EventBookingPayment, Long>{
 
-	CateringBookingPayment findBySessionId( String sessionId);
+	EventBookingPayment findBySessionId( String sessionId);
 }

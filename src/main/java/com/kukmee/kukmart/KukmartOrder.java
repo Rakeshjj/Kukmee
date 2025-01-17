@@ -11,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import lombok.AllArgsConstructor;
@@ -39,10 +40,10 @@ public class KukmartOrder {
 	private double totalAmount;
 
 	@Column(nullable = false)
-	private String status="PENDING";
+	private String status = "PENDING";
 
-	@Column(nullable = false)
-	private String pickupDate;
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private DeliveryDetails deliveryDetails;
 
 	private double gst;
 
@@ -62,6 +63,4 @@ public class KukmartOrder {
 	protected void onUpdate() {
 		updatedDate = LocalDateTime.now();
 	}
-
-	// Getters and Setters
 }

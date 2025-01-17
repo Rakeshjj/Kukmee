@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.kukmee.payment.service.StripeServiceCatering;
 import com.kukmee.payment.service.StripeServiceChef;
 import com.kukmee.payment.service.StripeServiceCook;
+import com.kukmee.payment.service.StripeServiceKukmart;
 import com.kukmee.payment.service.StripeServiceOrder;
 import com.kukmee.payment.service.SubscriptionPaymentService;
 
@@ -32,6 +33,9 @@ public class PaymentController {
 
 	@Autowired
 	private SubscriptionPaymentService subscriptionPaymentService;
+
+	@Autowired
+	private StripeServiceKukmart stripeServiceKukmart;
 
 	@PostMapping("/order")
 	public ResponseEntity<StripeResponse> checkoutOrder(@RequestParam Long orderid) {
@@ -122,7 +126,7 @@ public class PaymentController {
 		StripeResponse response = subscriptionPaymentService.subscriptionPlan(id);
 		return ResponseEntity.ok(response);
 	}
-	
+
 	@GetMapping("/subscriptionsuccess")
 	public ResponseEntity<String> handlePaymentSuccessSubscription(@RequestParam("session_id") String sessionId) {
 		String response = subscriptionPaymentService.handlePaymentSuccess(sessionId);
@@ -132,6 +136,24 @@ public class PaymentController {
 	@GetMapping("/subscriptioncancel")
 	public ResponseEntity<String> handlePaymentCancelSubscription(@RequestParam String sessionId) {
 		String response = subscriptionPaymentService.handlePaymentFailure(sessionId);
+		return ResponseEntity.ok(response);
+	}
+	
+	@PostMapping("/kukmart")
+	public ResponseEntity<StripeResponse> checkoutKukmart(@RequestParam Long id) {
+		StripeResponse response = stripeServiceKukmart.checkOutKukmart(id);
+		return ResponseEntity.ok(response);
+	}
+
+	@GetMapping("/kukmartsuccess")
+	public ResponseEntity<String> handlePaymentSuccessKukmart(@RequestParam("session_id") String sessionId) {
+		String response = stripeServiceKukmart.handlePaymentSuccess(sessionId);
+		return ResponseEntity.ok(response);
+	}
+
+	@GetMapping("/kukmartcancel")
+	public ResponseEntity<String> handlePaymentCancelKukmart(@RequestParam String sessionId) {
+		String response = stripeServiceKukmart.handlePaymentFailure(sessionId);
 		return ResponseEntity.ok(response);
 	}
 }

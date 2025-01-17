@@ -35,7 +35,7 @@ public class StripeServiceCook {
 		Stripe.apiKey = secretKey;
 
 		SessionCreateParams.LineItem.PriceData.ProductData productData = SessionCreateParams.LineItem.PriceData.ProductData
-				.builder().setName("Chef Booking # " + cookBookingId).build();
+				.builder().setName("Cook Booking").build();
 
 		SessionCreateParams.LineItem.PriceData priceData = SessionCreateParams.LineItem.PriceData.builder()
 				.setCurrency("INR").setUnitAmount(totalAmountInCents).setProductData(productData).build();

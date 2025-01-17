@@ -35,7 +35,7 @@ public class SubscriptionPaymentService {
 		Stripe.apiKey = secretKey;
 
 		SessionCreateParams.LineItem.PriceData.ProductData productData = SessionCreateParams.LineItem.PriceData.ProductData
-				.builder().setName("Chef Booking # " + id).build();
+				.builder().setName("Subscription").build();
 
 		SessionCreateParams.LineItem.PriceData priceData = SessionCreateParams.LineItem.PriceData.builder()
 				.setCurrency("INR").setUnitAmount(totalAmountInCents).setProductData(productData).build();

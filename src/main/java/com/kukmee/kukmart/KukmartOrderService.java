@@ -13,14 +13,7 @@ public class KukmartOrderService {
 	@Autowired
 	private KukmartOrderRepository orderRepository;
 
-//	@Autowired
-//	private InventoryService inventoryService;
-
 	public KukmartOrder createOrder(KukmartOrder order) {
-//
-//		for (KukmartOrderItem item : order.getItems()) {
-//			inventoryService.deductStock(item.getItemName(), item.getQuantity());
-//		}
 
 		double subtotal = order.getTotalAmount();
 
@@ -33,10 +26,6 @@ public class KukmartOrderService {
 		order.setTotalAmount(totalAmount);
 		return orderRepository.save(order);
 	}
-
-//	public Page<KukmartOrder> getOrderByCustomer(String username, Pageable pageable) {
-//		return orderRepository.findByCustomerUsernamePage(username, pageable);
-//	}
 
 	public List<KukmartOrder> getOrdersByCustomer(String username) {
 		return orderRepository.findByCustomerUsername(username);

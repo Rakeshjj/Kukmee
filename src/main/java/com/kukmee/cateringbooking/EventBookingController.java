@@ -3,6 +3,7 @@ package com.kukmee.cateringbooking;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,6 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kukmee.payment.PaymentController;
+
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/event")
 public class EventBookingController {
@@ -21,12 +26,22 @@ public class EventBookingController {
 	@Autowired
 	private EventBookingService eventBookingService;
 
+	@Autowired
+	private PaymentController paymentController;
+
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@PostMapping("/create")
-	public ResponseEntity<?> createBooking(@RequestBody EventBooking booking) {
-		eventBookingService.createBooking(booking);
+	public ResponseEntity<?> createCateringBooking(@Valid @RequestBody EventBooking booking) {
 
-		return ResponseEntity.ok("Catering event booking successfully!!!");
+		try {
+			eventBookingService.createBooking(booking);
+			ResponseEntity<?> paymentResponse = paymentController.checkoutCateringBooking(booking.getId());
+
+			return ResponseEntity.status(HttpStatus.CREATED).body(paymentResponse.getBody());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Order creation failed: " + e.getMessage());
+		}
 	}
 
 	@GetMapping("/getAll")
