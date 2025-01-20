@@ -1,6 +1,5 @@
 package com.kukmee.payment;
 
-import com.kukmee.cateringbooking.EventBooking;
 import com.kukmee.kukmart.KukmartOrder;
 
 import jakarta.persistence.Column;

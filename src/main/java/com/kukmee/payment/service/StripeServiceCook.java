@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.kukmee.cook.CookBooking;
-import com.kukmee.cook.repo.CookBookingRepo;
+import com.kukmee.cookbookings.CookServiceBooking;
+import com.kukmee.cookbookings.CookServiceBookingRepository;
 import com.kukmee.payment.CookBookingPayment;
 import com.kukmee.payment.StripeResponse;
 import com.kukmee.payment.repo.CookBookingPaymentRepo;
@@ -21,16 +21,16 @@ public class StripeServiceCook {
 	private String secretKey;
 
 	@Autowired
-	private CookBookingRepo cookBookingRepo;
+	private CookServiceBookingRepository cookServiceBookingRepository;
 
 	@Autowired
 	private CookBookingPaymentRepo cookBookingPaymentRepo;
 
-	public StripeResponse checkOutCookBooking(String cookBookingId) {
-		CookBooking chefBooking = cookBookingRepo.findById(cookBookingId)
-				.orElseThrow(() -> new RuntimeException("Chef booking not found with ID: " + cookBookingId));
+	public StripeResponse checkOutCookBooking(Long id) {
+		CookServiceBooking chefBooking = cookServiceBookingRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Chef booking not found with ID: " + id));
 
-		Long totalAmountInCents = (long) (chefBooking.getTotalAmount() * 100); // Convert to cents
+		Long totalAmountInCents = (long) (chefBooking.getGrandTotal() * 100); 
 
 		Stripe.apiKey = secretKey;
 
@@ -58,10 +58,10 @@ public class StripeServiceCook {
 
 		CookBookingPayment payment = new CookBookingPayment();
 		payment.setSessionId(session.getId());
-		payment.setAmount(chefBooking.getTotalAmount());
+		payment.setAmount(chefBooking.getGrandTotal());
 		payment.setCurrency("INR");
 		payment.setStatus("PENDING");
-		payment.setCookBookingOneMeal(chefBooking);
+		payment.setCookServiceBooking(chefBooking);
 		payment.setPaymentId(session.getPaymentIntent());
 		cookBookingPaymentRepo.save(payment);
 

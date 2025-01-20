@@ -29,20 +29,20 @@ public class ChefMonthlyBookingController {
 	@Autowired
 	private PaymentController paymentController;
 
-	@PreAuthorize("hasRole('CUSTOMER')")
-	@PostMapping
-	public ResponseEntity<?> createBooking(@RequestBody ChefMonthlyBooking chefBooking) {
-
-		try {
-			chefBookingService.createBooking(chefBooking);
-			ResponseEntity<?> paymentResponse = paymentController.checkoutBookingCreationMonthly(chefBooking.getId());
-
-			return ResponseEntity.status(HttpStatus.CREATED).body(paymentResponse.getBody());
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body("Order creation failed: " + e.getMessage());
-		}
-	}
+//	@PreAuthorize("hasRole('CUSTOMER')")
+//	@PostMapping
+//	public ResponseEntity<?> createBooking(@RequestBody ChefMonthlyBooking chefBooking) {
+//
+//		try {
+//			chefBookingService.createBooking(chefBooking);
+//			ResponseEntity<?> paymentResponse = paymentController.checkoutBookingCreationMonthly(chefBooking.getId());
+//
+//			return ResponseEntity.status(HttpStatus.CREATED).body(paymentResponse.getBody());
+//		} catch (Exception e) {
+//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//					.body("Order creation failed: " + e.getMessage());
+//		}
+//	}
 
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@GetMapping("/get")

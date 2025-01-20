@@ -67,4 +67,17 @@ public class KukmartOrderController {
 	public KukmartOrder cancelOrder(@PathVariable Long id) {
 		return orderService.cancelOrder(id);
 	}
+
+	@PreAuthorize("hasRole('CUSTOMER')")
+	@PostMapping("/refill")
+	public ResponseEntity<?> refillOrder(@RequestParam Long id) {
+		try {
+			KukmartOrder newOrder = orderService.refillOrder(id);
+			return ResponseEntity.status(HttpStatus.CREATED).body(newOrder);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Refill order failed: " + e.getMessage());
+		}
+	}
+
 }

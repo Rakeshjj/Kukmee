@@ -26,6 +26,7 @@ public class CookBookingService {
 		if (booking.getPhoneNumber() == null || String.valueOf(booking.getPhoneNumber()).length() != 10) {
 			throw new IllegalArgumentException("Phone number is required & exactly 10 digits");
 		}
+
 		return cookServiceBookingRepository.save(booking);
 	}
 

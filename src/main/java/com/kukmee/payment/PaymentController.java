@@ -44,26 +44,14 @@ public class PaymentController {
 	}
 
 	@PostMapping("/chef")
-	public ResponseEntity<StripeResponse> checkoutBookingCreation(@RequestParam String chefBookingId) {
-		StripeResponse stripeResponse = stripeServiceChef.checkOutChefBooking(chefBookingId);
+	public ResponseEntity<StripeResponse> checkoutBookingChef(@RequestParam Long id) {
+		StripeResponse stripeResponse = stripeServiceChef.checkOutChefBooking(id);
 		return ResponseEntity.ok(stripeResponse);
 	}
 
 	@PostMapping("/cook")
-	public ResponseEntity<StripeResponse> checkoutBookingCook(@RequestParam String cookBookingId) {
-		StripeResponse stripeResponse = stripeServiceCook.checkOutCookBooking(cookBookingId);
-		return ResponseEntity.ok(stripeResponse);
-	}
-
-	@PostMapping("/chefMul")
-	public ResponseEntity<StripeResponse> checkoutBookingCreationMultiple(@RequestParam String chefDayId) {
-		StripeResponse stripeResponse = stripeServiceChef.checkOutChefBookingMultiple(chefDayId);
-		return ResponseEntity.ok(stripeResponse);
-	}
-
-	@PostMapping("/chefMonthly")
-	public ResponseEntity<StripeResponse> checkoutBookingCreationMonthly(@RequestParam String id) {
-		StripeResponse stripeResponse = stripeServiceChef.checkOutChefBookingMonthly(id);
+	public ResponseEntity<StripeResponse> checkoutBookingCook(@RequestParam Long id) {
+		StripeResponse stripeResponse = stripeServiceCook.checkOutCookBooking(id);
 		return ResponseEntity.ok(stripeResponse);
 	}
 
@@ -138,7 +126,7 @@ public class PaymentController {
 		String response = subscriptionPaymentService.handlePaymentFailure(sessionId);
 		return ResponseEntity.ok(response);
 	}
-	
+
 	@PostMapping("/kukmart")
 	public ResponseEntity<StripeResponse> checkoutKukmart(@RequestParam Long id) {
 		StripeResponse response = stripeServiceKukmart.checkOutKukmart(id);

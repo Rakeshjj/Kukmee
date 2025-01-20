@@ -1,11 +1,15 @@
 package com.kukmee.cookbookings;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -45,10 +49,32 @@ public class CookServiceBooking {
 	private String fullName;
 
 	@NotNull(message = "email cannot be null")
-    @Email
+	@Email
 	private String email;
 
 	@NotNull(message = "phoneNumber cannot be null")
 	private String phoneNumber;
+
+	@NotNull(message = "totalAmount cannot be null")
+	private double grandTotal;
+
+	private double gst;
+
+	@Column(nullable = false, updatable = false)
+	private LocalDateTime createdDate;
+
+	@Column(nullable = false)
+	private LocalDateTime updatedDate;
+
+	@PrePersist
+	protected void onCreate() {
+		createdDate = LocalDateTime.now();
+		updatedDate = LocalDateTime.now();
+	}
+
+	@PreUpdate
+	protected void onUpdate() {
+		updatedDate = LocalDateTime.now();
+	}
 
 }

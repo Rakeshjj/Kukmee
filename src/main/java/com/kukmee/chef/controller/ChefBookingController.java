@@ -33,21 +33,21 @@ public class ChefBookingController {
 		this.chefBookingService = chefBookingService;
 	}
 
-	@PreAuthorize("hasRole('CUSTOMER')")
-	@PostMapping
-	public ResponseEntity<?> createBooking(@RequestBody ChefBooking chefBooking) {
-
-		try {
-			chefBookingService.createBooking(chefBooking);
-			ResponseEntity<?> paymentResponse = paymentController
-					.checkoutBookingCreation(chefBooking.getChefBookingId());
-
-			return ResponseEntity.status(HttpStatus.CREATED).body(paymentResponse.getBody());
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body("Order creation failed: " + e.getMessage());
-		}
-	}
+//	@PreAuthorize("hasRole('CUSTOMER')")
+//	@PostMapping
+//	public ResponseEntity<?> createBooking(@RequestBody ChefBooking chefBooking) {
+//
+//		try {
+//			chefBookingService.createBooking(chefBooking);
+//			ResponseEntity<?> paymentResponse = paymentController
+//					.checkoutBookingCreation(chefBooking.getChefBookingId());
+//
+//			return ResponseEntity.status(HttpStatus.CREATED).body(paymentResponse.getBody());
+//		} catch (Exception e) {
+//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//					.body("Order creation failed: " + e.getMessage());
+//		}
+//	}
 
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@PostMapping("/lunch")

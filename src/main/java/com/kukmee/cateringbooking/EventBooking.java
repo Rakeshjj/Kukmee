@@ -1,10 +1,14 @@
 package com.kukmee.cateringbooking;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -50,5 +54,22 @@ public class EventBooking {
 
 	@NotNull(message = "EventLocation cannot be null")
 	private String eventLocation;
+
+	@Column(nullable = false, updatable = false)
+	private LocalDateTime createdDate;
+
+	@Column(nullable = false)
+	private LocalDateTime updatedDate;
+
+	@PrePersist
+	protected void onCreate() {
+		createdDate = LocalDateTime.now();
+		updatedDate = LocalDateTime.now();
+	}
+
+	@PreUpdate
+	protected void onUpdate() {
+		updatedDate = LocalDateTime.now();
+	}
 
 }

@@ -20,21 +20,11 @@ public class ChefServiceBookingService {
 			throw new IllegalArgumentException("Start date and end date cannot be the same for multiple-day bookings.");
 		}
 
-		if (booking.getServiceStartDate() != null && booking.getServiceEndDate() != null) {
-
-			long actualDuration = ChronoUnit.DAYS.between(booking.getServiceStartDate(), booking.getServiceEndDate())
-					+ 1;
-
-			if (actualDuration != booking.getDuration()) {
-				throw new IllegalArgumentException("The duration does not match the start and end dates.");
-			}
-		}
-
 		if (booking.getChefType() == null || booking.getChefType().isEmpty()) {
 			throw new IllegalArgumentException("ChefType is required");
 		}
 
-		if (booking.getCategories() == null || booking.getCategories().isEmpty()) {
+		if (booking.getCuisine() == null || booking.getCuisine().isEmpty()) {
 			throw new IllegalArgumentException("Categories is required");
 		}
 
@@ -62,9 +52,14 @@ public class ChefServiceBookingService {
 			throw new IllegalArgumentException("Full Name is required");
 		}
 
-		if (booking.getDuration() > 1 && booking.getServiceEndDate() == null) {
-			throw new IllegalArgumentException("Service end date is required for multiple-day bookings.");
-		}
+		double subtotal = booking.getGrandTotal();
+
+		double gst = subtotal * 0.18;
+
+		double totalAmount = gst + subtotal;
+
+		booking.setGrandTotal(totalAmount);
+		booking.setGst(gst);
 
 		return bookingRepository.save(booking);
 	}

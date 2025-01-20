@@ -3,6 +3,7 @@ package com.kukmee.payment;
 import com.kukmee.chef.ChefBooking;
 import com.kukmee.chef.ChefBookingMultipleDays;
 import com.kukmee.chef.ChefMonthlyBooking;
+import com.kukmee.chefbookings.ChefServiceBooking;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,7 +30,7 @@ public class ChefBookingPayment {
 	@Column(name = "session_id", nullable = false, unique = true)
 	private String sessionId;
 
-	@Column(name = "payment_id") 
+	@Column(name = "payment_id")
 	private String paymentId;
 
 	private double amount;
@@ -38,13 +39,6 @@ public class ChefBookingPayment {
 
 	@ManyToOne
 	@JoinColumn(name = "chef_booking_id")
-	private ChefBooking chefBooking;
+	private ChefServiceBooking chefServiceBooking;
 
-	@ManyToOne
-	@JoinColumn(name = "chef_booking_multiple")
-	private ChefBookingMultipleDays chefBookingMultipleDays;
-
-	@ManyToOne
-	@JoinColumn(name = "chef_book_monthly")
-	private ChefMonthlyBooking chefMonthlyBooking;
 }

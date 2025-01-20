@@ -1,11 +1,15 @@
 package com.kukmee.chefbookings;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,10 +31,10 @@ public class ChefServiceBooking {
 	private String chefType;
 
 	@NotNull(message = "Categories cannot be null")
-	private String categories;
+	private String cuisine;
 
 	@NotNull(message = "Duration cannot be null")
-	private int duration;
+	private int numMembers;
 
 	@NotNull(message = "serviceStartDate cannot be null")
 	private LocalDate serviceStartDate;
@@ -54,5 +58,27 @@ public class ChefServiceBooking {
 
 	@NotNull(message = "PhoneNumber cannot be null")
 	private String phoneNumber;
+
+	@NotNull(message = "totalAmount cannot be null")
+	private double grandTotal;
+
+	private double gst;
+
+	@Column(nullable = false, updatable = false)
+	private LocalDateTime createdDate;
+
+	@Column(nullable = false)
+	private LocalDateTime updatedDate;
+
+	@PrePersist
+	protected void onCreate() {
+		createdDate = LocalDateTime.now();
+		updatedDate = LocalDateTime.now();
+	}
+
+	@PreUpdate
+	protected void onUpdate() {
+		updatedDate = LocalDateTime.now();
+	}
 
 }

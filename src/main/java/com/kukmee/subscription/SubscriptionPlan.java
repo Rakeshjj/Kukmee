@@ -1,6 +1,7 @@
 package com.kukmee.subscription;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.kukmee.entity.Customer;
@@ -13,6 +14,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,22 +34,40 @@ public class SubscriptionPlan {
 	private Long id;
 
 	@NotNull(message = "PlanType cannot be null")
-	private String planType; 
-	private String description; 
+	private String planType;
+	private String description;
 	@NotNull(message = "Cost cannot be null")
 	private Double cost;
 
 	@NotNull(message = "Duration cannot be null")
-	private Integer duration; 
+	private Integer duration;
 	@ElementCollection
-	private List<String> mealPreferences; 
+	private List<String> mealPreferences;
 	@Column(nullable = false)
-	private String availability; 
+	private String availability;
 	@Column(nullable = false)
 	private LocalDate startDate;
 
 	private boolean isExpired = false;
 	@ManyToOne
-	@JoinColumn(name = "customer_id") 
+	@JoinColumn(name = "customer_id")
 	private Customer customer;
+
+	@Column(nullable = false, updatable = false)
+	private LocalDateTime createdDate;
+
+	@Column(nullable = false)
+	private LocalDateTime updatedDate;
+
+	@PrePersist
+	protected void onCreate() {
+		createdDate = LocalDateTime.now();
+		updatedDate = LocalDateTime.now();
+	}
+
+	@PreUpdate
+	protected void onUpdate() {
+		updatedDate = LocalDateTime.now();
+	}
+
 }

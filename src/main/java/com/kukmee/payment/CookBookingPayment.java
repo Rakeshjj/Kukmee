@@ -1,6 +1,7 @@
 package com.kukmee.payment;
 
 import com.kukmee.cook.CookBooking;
+import com.kukmee.cookbookings.CookServiceBooking;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,6 +37,6 @@ public class CookBookingPayment {
 
 	@ManyToOne
 	@JoinColumn(name = "cook_booking_id")
-	private CookBooking cookBookingOneMeal;
+	private CookServiceBooking cookServiceBooking;
 
 }
