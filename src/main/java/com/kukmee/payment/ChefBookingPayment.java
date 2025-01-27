@@ -1,8 +1,5 @@
 package com.kukmee.payment;
 
-import com.kukmee.chef.ChefBooking;
-import com.kukmee.chef.ChefBookingMultipleDays;
-import com.kukmee.chef.ChefMonthlyBooking;
 import com.kukmee.chefbookings.ChefServiceBooking;
 
 import jakarta.persistence.Column;

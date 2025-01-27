@@ -1,6 +1,5 @@
 package com.kukmee.payment;
 
-import com.kukmee.cook.CookBooking;
 import com.kukmee.cookbookings.CookServiceBooking;
 
 import jakarta.persistence.Column;
