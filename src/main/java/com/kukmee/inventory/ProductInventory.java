@@ -1,4 +1,4 @@
-package com.kukmee.kukmart;
+package com.kukmee.inventory;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,16 +15,25 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class DeliveryDetails {
+public class ProductInventory {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false, length = 500)
-	private String address;
+	@Column(nullable = false, length = 100)
+	private String name;
 
 	@Column(nullable = false)
-	private String deliveryDate;
+	private double price;
+
+	@Column(nullable = false)
+	private int stockQuantity; // Available stock quantity
+
+	@Column(nullable = true)
+	private String description; // Optional description of the product
+
+	@Column(nullable = false)
+	private boolean isActive = true; // To mark products as active or inactive
 
 }

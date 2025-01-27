@@ -5,43 +5,66 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.kukmee.kukmart.KukmartOrderItem;
+
 @Service
 public class InventoryService {
 
 	@Autowired
-	private InventoryRepository inventoryRepository;
+	private ProductInventoryRepository productRepository; // Inject the product repository
 
-	public InventoryItem addItem(InventoryItem item) {
-		return inventoryRepository.save(item);
+	// Get all products in inventory
+	public List<ProductInventory> getAllProducts() {
+		return productRepository.findAll();
 	}
 
-	public InventoryItem updateItem(InventoryItem item) {
-		InventoryItem existingItem = inventoryRepository.findById(item.getId())
-				.orElseThrow(() -> new RuntimeException("Item not found"));
-		existingItem.setQuantity(item.getQuantity());
-		existingItem.setPricePerUnit(item.getPricePerUnit());
-		existingItem.setMinimumStockLevel(item.getMinimumStockLevel());
-		return inventoryRepository.save(existingItem);
+	// Get product by its name
+	public ProductInventory getProductByName(String productName) {
+		return productRepository.findByName(productName);
 	}
 
-	public void deleteItem(Long id) {
-		inventoryRepository.deleteById(id);
-	}
+	// Check if there is enough stock for the order
+	public boolean checkStockAvailability(List<KukmartOrderItem> items) {
+		for (KukmartOrderItem item : items) {
+			ProductInventory product = productRepository.findByName(item.getName());
 
-	public List<InventoryItem> getAllItems() {
-		return inventoryRepository.findAll();
-	}
+			if (product == null) {
+				return false; // Product not found
+			}
 
-	public List<InventoryItem> getLowStockItems() {
-		return inventoryRepository.findByQuantityLessThan(10); // Example threshold
-	}
-
-	public void deductStock(String itemName, int quantity) {
-		InventoryItem item = inventoryRepository.findByItemName(itemName);
-		if (item.getQuantity() < quantity) {
-			throw new RuntimeException("Insufficient stock for item: " + itemName);
+			// Check if there is enough stock
+			if (product.getStockQuantity() < item.getQuantity()) {
+				return false; // Not enough stock
+			}
 		}
-		item.setQuantity(item.getQuantity() - quantity);
-		inventoryRepository.save(item);
+		return true; // Sufficient stock for all products
+	}
+
+	// Update stock after order creation
+	public void updateStockAfterOrder(List<KukmartOrderItem> items) {
+		for (KukmartOrderItem item : items) {
+			ProductInventory product = productRepository.findByName(item.getName());
+
+			if (product != null) {
+				int remainingStock = product.getStockQuantity() - item.getQuantity();
+				product.setStockQuantity(remainingStock);
+				productRepository.save(product); // Save the updated product
+			}
+		}
+	}
+
+	// Add a new product to the inventory
+	public ProductInventory addNewProduct(ProductInventory product) {
+		return productRepository.save(product);
+	}
+
+	// Update product details in the inventory
+	public ProductInventory updateProduct(ProductInventory product) {
+		return productRepository.save(product);
+	}
+
+	// Remove a product from the inventory (soft delete, for example)
+	public void removeProduct(Long productId) {
+		productRepository.deleteById(productId);
 	}
 }

@@ -27,6 +27,9 @@ public class StripeServiceKukmart {
 	private KukmartOrderRepository kukmartOrderRepository;
 
 	public StripeResponse checkOutKukmart(Long id) {
+
+		long startTime = System.currentTimeMillis();
+
 		KukmartOrder kukmartOrder = kukmartOrderRepository.findById(id)
 				.orElseThrow(() -> new RuntimeException("kukmart order not found with ID: " + id));
 
@@ -35,7 +38,7 @@ public class StripeServiceKukmart {
 		Stripe.apiKey = secretKey;
 
 		SessionCreateParams.LineItem.PriceData.ProductData productData = SessionCreateParams.LineItem.PriceData.ProductData
-				.builder().setName("Catering Booking").build();
+				.builder().setName("Kukmart Order").build();
 
 		SessionCreateParams.LineItem.PriceData priceData = SessionCreateParams.LineItem.PriceData.builder()
 				.setCurrency("INR").setUnitAmount(totalAmountInCents).setProductData(productData).build();
@@ -44,34 +47,43 @@ public class StripeServiceKukmart {
 				.setPriceData(priceData).build();
 
 		SessionCreateParams params = SessionCreateParams.builder().setMode(SessionCreateParams.Mode.PAYMENT)
-				.setSuccessUrl("http://localhost:8082/payment/v1/kukmartsuccess?session_id={CHECKOUT_SESSION_ID}")
-				.setCancelUrl("http://localhost:8082/payment/v1/kukmartcancel").addLineItem(lineItem).build();
+				.setSuccessUrl("http://127.0.0.1:5500/index-food.html?session_id={CHECKOUT_SESSION_ID}")
+				.setCancelUrl("http://127.0.0.1:5500/payment-failed.html").addLineItem(lineItem).build();
 
 		Session session;
 		try {
+			long sessionStartTime = System.currentTimeMillis();
 			session = Session.create(params);
+			long sessionEndTime = System.currentTimeMillis();
+			System.out.println("Time taken for Stripe Session.create: " + (sessionEndTime - sessionStartTime) + "ms");
+
+			KukmartPayment payment = new KukmartPayment();
+			payment.setSessionId(session.getId());
+			payment.setAmount(kukmartOrder.getTotalAmount());
+			payment.setCurrency("INR");
+			payment.setStatus("PENDING");
+			payment.setKukmartOrder(kukmartOrder);
+
+			long endTime = System.currentTimeMillis();
+			System.out.println("Total Time taken: " + (endTime - startTime) + "ms");
+
+			kukmartPaymentRepository.save(payment);
+
+			return StripeResponse.builder().status("SUCCESS").message("Payment session created")
+					.sessionId(session.getId()).sessionUrl(session.getUrl()).build();
+
 		} catch (StripeException e) {
 			e.printStackTrace();
 			return StripeResponse.builder().status("FAILED").message("Error creating Stripe session: " + e.getMessage())
 					.build();
 		}
 
-		KukmartPayment payment = new KukmartPayment();
-		payment.setSessionId(session.getId());
-		payment.setAmount(kukmartOrder.getTotalAmount());
-		payment.setCurrency("INR");
-		payment.setStatus("PENDING");
-		payment.setKukmartOrder(kukmartOrder);
-
-		kukmartPaymentRepository.save(payment);
-
-		return StripeResponse.builder().status("SUCCESS").message("Payment session created").sessionId(session.getId())
-				.sessionUrl(session.getUrl()).build();
 	}
 
 	public String handlePaymentSuccess(String sessionId) {
+
 		System.out.println("Session ID received: " + sessionId);
-		
+
 		KukmartPayment payment = kukmartPaymentRepository.findBySessionId(sessionId);
 		if (payment == null) {
 			System.out.println("No payment found for session ID: " + sessionId);
@@ -83,6 +95,7 @@ public class StripeServiceKukmart {
 	}
 
 	public String handlePaymentFailure(String sessionId) {
+
 		KukmartPayment payment = kukmartPaymentRepository.findBySessionId(sessionId);
 		if (payment != null) {
 			payment.setStatus("FAILED");

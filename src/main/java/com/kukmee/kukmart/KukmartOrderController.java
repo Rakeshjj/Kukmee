@@ -1,7 +1,5 @@
 package com.kukmee.kukmart;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,12 +28,12 @@ public class KukmartOrderController {
 	private PaymentController paymentController;
 
 	@PreAuthorize("hasRole('CUSTOMER')")
-	@PostMapping("/create")
-	public ResponseEntity<?> createCateringBooking(@Valid @RequestBody KukmartOrder order) {
+	@PostMapping("/create/{customerid}")
+	public ResponseEntity<?> createKukmartOrder(@Valid @RequestBody KukmartOrder order, @PathVariable Long customerid) {
 
 		try {
-			orderService.createOrder(order);
-			ResponseEntity<?> paymentResponse = paymentController.checkoutKukmart(order.getId());
+			KukmartOrder savedOrder = orderService.createOrder(order, customerid);
+			ResponseEntity<?> paymentResponse = paymentController.checkoutKukmart(savedOrder.getId());
 
 			return ResponseEntity.status(HttpStatus.CREATED).body(paymentResponse.getBody());
 		} catch (Exception e) {
@@ -44,11 +42,11 @@ public class KukmartOrderController {
 		}
 	}
 
-	@PreAuthorize("hasRole('CUSTOMER')")
-	@GetMapping("/customer/{username}")
-	public List<KukmartOrder> getOrdersByCustomer(@PathVariable String username) {
-		return orderService.getOrdersByCustomer(username);
-	}
+//	@PreAuthorize("hasRole('CUSTOMER')")
+//	@GetMapping("/customer/{username}")
+//	public List<KukmartOrder> getOrdersByCustomer(@PathVariable String username) {
+//		return orderService.getOrdersByCustomer(username);
+//	}
 
 	@PreAuthorize("hasRole('CUSTOMER') or hasRole('ADMIN')")
 	@GetMapping("/{id}")
@@ -68,16 +66,16 @@ public class KukmartOrderController {
 		return orderService.cancelOrder(id);
 	}
 
-	@PreAuthorize("hasRole('CUSTOMER')")
-	@PostMapping("/refill")
-	public ResponseEntity<?> refillOrder(@RequestParam Long id) {
-		try {
-			KukmartOrder newOrder = orderService.refillOrder(id);
-			return ResponseEntity.status(HttpStatus.CREATED).body(newOrder);
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body("Refill order failed: " + e.getMessage());
-		}
-	}
+//	@PreAuthorize("hasRole('CUSTOMER')")
+//	@PostMapping("/refill")
+//	public ResponseEntity<?> refillOrder(@RequestParam Long id) {
+//		try {
+//			KukmartOrder newOrder = orderService.refillOrder(id);
+//			return ResponseEntity.status(HttpStatus.CREATED).body(newOrder);
+//		} catch (Exception e) {
+//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//					.body("Refill order failed: " + e.getMessage());
+//		}
+//	}
 
 }

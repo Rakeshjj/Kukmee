@@ -27,13 +27,14 @@ public class SubscriptionPaymentService {
 	private SubscriptionPlanRepository subscriptionPlanRepository;
 
 	public StripeResponse subscriptionPlan(Long id) {
-		SubscriptionPlan subscriptionPlan = subscriptionPlanRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Chef booking not found with ID: " + id));
 
-		Long totalAmountInCents = (long) (subscriptionPlan.getCost() * 100); // Convert to cents
+		long startTime = System.currentTimeMillis();
+
+		SubscriptionPlan subscriptionPlan = subscriptionPlanRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Subscription not found with ID: " + id));
+		Long totalAmountInCents = (long) (subscriptionPlan.getTotalAmount() * 100);
 
 		Stripe.apiKey = secretKey;
-
 		SessionCreateParams.LineItem.PriceData.ProductData productData = SessionCreateParams.LineItem.PriceData.ProductData
 				.builder().setName("Subscription").build();
 
@@ -47,27 +48,33 @@ public class SubscriptionPaymentService {
 				.setSuccessUrl("http://localhost:8082/payment/v1/subscriptionsuccess?session_id={CHECKOUT_SESSION_ID}")
 				.setCancelUrl("http://localhost:8082/payment/v1/subscriptioncancel").addLineItem(lineItem).build();
 
-		Session session;
 		try {
-			session = Session.create(params);
+			long sessionStartTime = System.currentTimeMillis();
+			Session session = Session.create(params);
+			long sessionEndTime = System.currentTimeMillis();
+			System.out.println("Time taken for Stripe Session.create: " + (sessionEndTime - sessionStartTime) + "ms");
+
+			SubscriptionPayment payment = new SubscriptionPayment();
+			payment.setSessionId(session.getId());
+			payment.setAmount(subscriptionPlan.getTotalAmount());
+			payment.setCurrency("INR");
+			payment.setStatus("PENDING");
+			payment.setSubscriptionPlan(subscriptionPlan);
+			subscriptionPaymentRepo.save(payment);
+
+			long endTime = System.currentTimeMillis();
+			System.out.println("Total time taken: " + (endTime - startTime) + "ms");
+
+			return StripeResponse.builder().status("SUCCESS").message("Payment session created")
+					.sessionId(session.getId()).sessionUrl(session.getUrl()).build();
 		} catch (StripeException e) {
 			e.printStackTrace();
 			return StripeResponse.builder().status("FAILED").message("Error creating Stripe session: " + e.getMessage())
 					.build();
 		}
-
-		SubscriptionPayment payment = new SubscriptionPayment();
-		payment.setSessionId(session.getId());
-		payment.setAmount(subscriptionPlan.getCost());
-		payment.setCurrency("INR");
-		payment.setStatus("PENDING");
-		payment.setSubscriptionPlan(subscriptionPlan);
-		subscriptionPaymentRepo.save(payment);
-
-		return StripeResponse.builder().status("SUCCESS").message("Payment session created").sessionId(session.getId())
-				.sessionUrl(session.getUrl()).build();
 	}
 
+	
 	public String handlePaymentSuccess(String sessionId) {
 		System.out.println("Session ID received: " + sessionId);
 		SubscriptionPayment payment = subscriptionPaymentRepo.findBySessionId(sessionId);
