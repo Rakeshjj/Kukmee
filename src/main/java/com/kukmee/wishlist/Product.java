@@ -10,15 +10,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 public class Product {
 
 	@Id
@@ -33,7 +33,7 @@ public class Product {
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "product_id")
-	private List<Size> sizes;
+	private List<com.kukmee.wishlist.Size> sizes;
 	
 //	@ManyToOne
 //    @JoinColumn(name = "customer_id", nullable = false)
