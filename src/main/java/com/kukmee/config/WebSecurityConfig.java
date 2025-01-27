@@ -84,7 +84,8 @@ public class WebSecurityConfig {
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 				.authorizeHttpRequests(auth -> auth.requestMatchers("/favicon.ico").permitAll()
-						.requestMatchers("/api/auth/**").permitAll().requestMatchers("/api/auth/me").authenticated()
+						.requestMatchers("/api/auth/**").permitAll()
+						.requestMatchers("/me").authenticated()
 						.requestMatchers("/api/franchise/inquiry").permitAll()
 						.requestMatchers("/payment/v1/success", "/payment/v1/cancel").permitAll()
 						.requestMatchers("/payment/v1/subscriptionsuccess", "/payment/v1/subscriptioncancel").permitAll()
@@ -93,11 +94,11 @@ public class WebSecurityConfig {
 						.requestMatchers("/payment/v1/cateringsuccess", "/payment/v1/cateringcancel").permitAll()
 						.requestMatchers("/payment/v1/cooksuccess", "/payment/v1/cookcancel").permitAll()
 						.requestMatchers("/api/auth/reset-password").permitAll()
+		                .requestMatchers("/api/products/**").hasRole("CUSTOMER")
 						.requestMatchers("/payment/v1/monthlycooksuccess", "/payment/v1/monthlycookcancel").permitAll()
 						.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs.yaml")
 						.permitAll().requestMatchers("/api/fooditems/save").hasRole("ADMIN")
-						.requestMatchers("/api/bartender/book").authenticated().requestMatchers("/favicon.ico")
-						.permitAll().anyRequest().authenticated());
+						.anyRequest().authenticated());
 
 		http.authenticationProvider(authenticationProvider());
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
