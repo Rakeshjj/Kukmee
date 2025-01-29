@@ -21,13 +21,13 @@ public class VratMealSubscriptionController {
 	@Autowired
 	private PaymentController paymentController;
 
-	@PostMapping("/create")
-	public ResponseEntity<?> createSubscription(@RequestBody VratMealSubscription subscription, @PathVariable Long id) {
+	@PostMapping("/create/{customerid}")
+	public ResponseEntity<?> createSubscription(@RequestBody VratMealSubscription subscription,
+			@PathVariable Long customerid) {
 
 		try {
-			service.saveSubscription(subscription);
-
-			ResponseEntity<?> paymentResponse = paymentController.vratSubscriptionPlan(id);
+			service.saveSubscription(subscription, customerid);
+			ResponseEntity<?> paymentResponse = paymentController.vratSubscriptionPlan(customerid);
 
 			return ResponseEntity.status(HttpStatus.CREATED).body(paymentResponse.getBody());
 
