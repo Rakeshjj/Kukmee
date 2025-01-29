@@ -10,10 +10,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 
 @Data
 @AllArgsConstructor
@@ -25,7 +25,9 @@ public class Product {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@NotNull(message = "product name cannot be null")
 	private String name;
+
 	private String image;
 
 	@Embedded
@@ -34,7 +36,7 @@ public class Product {
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "product_id")
 	private List<com.kukmee.wishlist.Size> sizes;
-	
+
 //	@ManyToOne
 //    @JoinColumn(name = "customer_id", nullable = false)
 //	private Customer customer;
