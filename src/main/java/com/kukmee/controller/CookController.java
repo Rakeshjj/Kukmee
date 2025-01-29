@@ -24,7 +24,6 @@ public class CookController {
 	@Autowired
 	private CookService cookService;
 
-	// Register a new cook
 	@PostMapping("/cooksignup")
 	public ResponseEntity<?> registerCook(@Valid @RequestBody CookSignup cookSignup) {
 		return cookService.registerCook(cookSignup);

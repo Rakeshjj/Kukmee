@@ -14,6 +14,8 @@ import com.kukmee.payment.service.StripeServiceCook;
 import com.kukmee.payment.service.StripeServiceKukmart;
 import com.kukmee.payment.service.StripeServiceOrder;
 import com.kukmee.payment.service.SubscriptionPaymentService;
+import com.kukmee.payment.service.VratMelaspaymentService;
+import com.kukmee.vratmeals.VratMealSubscriptionService;
 
 @RestController
 @RequestMapping("/payment/v1")
@@ -36,6 +38,15 @@ public class PaymentController {
 
 	@Autowired
 	private StripeServiceKukmart stripeServiceKukmart;
+
+	@Autowired
+	private VratMelaspaymentService vratMealSubscriptionService;
+
+	@PostMapping("/vrat")
+	public ResponseEntity<StripeResponse> vratSubscriptionPlan(@RequestParam Long id) {
+		StripeResponse response = vratMealSubscriptionService.vratSubscriptionPlan(id);
+		return ResponseEntity.ok(response);
+	}
 
 	@PostMapping("/order")
 	public ResponseEntity<StripeResponse> checkoutOrder(@RequestParam Long orderid) {
