@@ -1,9 +1,13 @@
 package com.kukmee.vratmeals;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
 
 @Entity
@@ -13,14 +17,26 @@ public class VratMealSubscription {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private String selectedPlan; 
-	private LocalDate startDate; 
-	private int quantity; 
-	private double mealPrice; 
-	private double totalAmount; 
+	@NotNull(message = "Plan cannot be null")
+	private String selectedPlan;
+
+	@Column(nullable = false)
+	@NotBlank
+	@NotNull(message = "startdate cannot be null")
+	private LocalDate startDate;
+
+	@NotNull(message = "Quantity cannot be null")
+	private int quantity;
+
+	@NotNull(message = "Meal price cannot be null")
+	private double mealPrice;
+
+	@NotNull(message = "totalAmount cannot be null")
+	private double totalAmount;
+
+	@NotNull(message = "address cannot be null")
 	private String address;
 
-	// Getters and Setters
 	public Long getId() {
 		return id;
 	}
