@@ -47,7 +47,7 @@ public class SubscriptionPlan {
     private Double totalAmount; // New attribute
 
     @NotNull(message = "Address cannot be null")
-    private String address; // New attribute
+    private String address; 
 
     private boolean isExpired = false;
 
