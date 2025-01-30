@@ -36,7 +36,7 @@ public class OrderController {
 
 			System.out.println("Received Order: " + order); // Debugging
 
-			Order savedOrder = orderService.saveOrder(customerid, order);
+			orderService.saveOrder(customerid, order);
 			ResponseEntity<?> paymentResponse = paymentController.checkoutOrder(order.getOrderId());
 
 			return ResponseEntity.status(HttpStatus.CREATED).body(paymentResponse.getBody());

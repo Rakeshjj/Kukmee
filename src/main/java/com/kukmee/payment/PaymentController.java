@@ -15,7 +15,6 @@ import com.kukmee.payment.service.StripeServiceKukmart;
 import com.kukmee.payment.service.StripeServiceOrder;
 import com.kukmee.payment.service.SubscriptionPaymentService;
 import com.kukmee.payment.service.VratMelaspaymentService;
-import com.kukmee.vratmeals.VratMealSubscriptionService;
 
 @RestController
 @RequestMapping("/payment/v1")

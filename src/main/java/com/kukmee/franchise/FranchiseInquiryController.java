@@ -16,7 +16,7 @@ public class FranchiseInquiryController {
 
 	@PostMapping("/inquiry")
 	public ResponseEntity<?> createInquiry(@RequestBody FranchiseInquiry franchiseInquiry) {
-		FranchiseInquiry createInquiry = franchiseInquiryService.saveInquiry(franchiseInquiry);
+		franchiseInquiryService.saveInquiry(franchiseInquiry);
 		return ResponseEntity.ok("Inquiry send successfully...");
 
 	}

@@ -1,7 +1,6 @@
 package com.kukmee.payment;
 
 import com.kukmee.subscription.SubscriptionPlan;
-import com.kukmee.vratmeals.VratMealSubscription;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
